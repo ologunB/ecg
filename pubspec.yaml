@@ -1,0 +1,40 @@
+name: ecgalpha
+description: A new Flutter application.
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^0.1.2
+  flutter_auth_buttons:
+  shared_preferences:
+  image_picker: #TODO configure for iOS later
+  firebase_database:
+  firebase_storage:
+  intent: ^1.1.0
+  firebase_core: ^0.4.0+9
+  firebase_auth: ^0.14.0+5
+  url_launcher:
+  cached_network_image:
+  intl:
+  smooth_star_rating:
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+  assets:
+    - assets/images/
+
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: assets/fonts/raleway.ttf
