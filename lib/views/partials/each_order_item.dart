@@ -60,7 +60,7 @@ class _EachOrderItemState extends State<EachOrderItem> {
                     SizedBox(width: 10),
                     Text("16th April 2020 (8:45PM)",
                         style: TextStyle(
-                            fontSize: 19,
+                            fontSize: 18,
                             fontWeight: FontWeight.w300,
                             color: Colors.black))
                   ],

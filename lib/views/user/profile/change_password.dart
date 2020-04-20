@@ -9,19 +9,19 @@ class ChangePasswordPage extends StatefulWidget {
   _PaymentMethodState createState() => _PaymentMethodState();
 }
 
+Widget labelText(String t) => Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        t,
+        style: TextStyle(fontSize: 18, color: Styles.appPrimaryColor),
+      ),
+    );
+
 class _PaymentMethodState extends State<ChangePasswordPage> {
-  Widget text(String t) => Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          t,
-          style: TextStyle(fontSize: 18, color: Styles.appPrimaryColor),
-        ),
-      );
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
@@ -45,7 +45,7 @@ class _PaymentMethodState extends State<ChangePasswordPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        text("Old Password"),
+                        labelText("Old Password"),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: TextField(
@@ -59,7 +59,7 @@ class _PaymentMethodState extends State<ChangePasswordPage> {
                           ),
                         ),
                         Divider(),
-                        text("New Password"),
+                        labelText("New Password"),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: TextField(
@@ -73,7 +73,7 @@ class _PaymentMethodState extends State<ChangePasswordPage> {
                           ),
                         ),
                         Divider(),
-                        text("Confirm Password"),
+                        labelText("Confirm Password"),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: TextField(

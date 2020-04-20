@@ -33,15 +33,15 @@ class _AuthPageState extends State<AuthPage> {
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
+                    begin: Alignment.topCenter,
                     colors: [
                       Styles.appPrimaryColor,
                       Colors.blue,
-                      Styles.appAccentColor,
                     ],
                   ),
                   borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(70),
-                    bottomRight: Radius.circular(70),
+                    bottomLeft: Radius.circular(40),
+                    bottomRight: Radius.circular(40),
                   ),
                 ),
                 //   color: Styles.appPrimaryColor,
@@ -96,7 +96,7 @@ class _AuthPageState extends State<AuthPage> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             boxShadow: [
-                              BoxShadow(color: Colors.grey[200], blurRadius: 20)
+                              BoxShadow(color: Colors.grey[200], blurRadius: 5)
                             ],
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -314,13 +314,13 @@ class _LoginWidgetState extends State<LoginWidget> {
                 checkColor: Colors.white,
               ),
               Text("Remember me",
-                  style: TextStyle(fontSize: 16, color: Colors.black)),
+                  style: TextStyle(fontSize: 15, color: Colors.black)),
             ]),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Text(
                 "Forgot Password?",
-                style: TextStyle(color: Colors.blue, fontSize: 16),
+                style: TextStyle(color: Colors.blue, fontSize: 15),
               ),
             ),
           ],

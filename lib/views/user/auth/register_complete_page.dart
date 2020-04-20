@@ -1,5 +1,5 @@
 import 'package:ecgalpha/utils/styles.dart';
-import 'package:ecgalpha/views/admin/admin_layout_template.dart';
+import 'package:ecgalpha/views/user/partials/layout_template.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +15,7 @@ class _RegisterCompleteScreenState extends State<RegisterCompleteScreen> {
       body: InkWell(
         onTap: () {
           Navigator.of(context).pushReplacement(
-              CupertinoPageRoute(builder: (context) => AdminLayoutTemplate()));
+              CupertinoPageRoute(builder: (context) => LayoutTemplate()));
         },
         child: Container(
           padding: EdgeInsets.all(20),

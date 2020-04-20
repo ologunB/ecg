@@ -123,6 +123,7 @@ class _UserProfileState extends State<UserProfile> {
                         length: 3,
                         child: Scaffold(
                           appBar: AppBar(
+                            leading: Container(),
                             flexibleSpace: SafeArea(
                               child: TabBar(
                                   isScrollable: true,

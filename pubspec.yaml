@@ -22,6 +22,7 @@ dependencies:
   cached_network_image:
   intl:
   smooth_star_rating:
+  font_awesome_font:
 
 
 dev_dependencies:

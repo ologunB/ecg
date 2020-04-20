@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/views/user/profile/change_password.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -34,7 +35,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
           elevation: 0.0,
           centerTitle: true,
           title: Text(
-            "New Investment",
+            "Create new Investment",
             style: TextStyle(
                 color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
           ),
@@ -45,23 +46,13 @@ class _PaymentMethodState extends State<CreateInvestment> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  "Create an Investment",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w400),
-                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 18.0),
                   child: Container(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Name"),
-                        ),
+                        labelText("Name"),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: TextField(
@@ -75,10 +66,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
                           ),
                         ),
                         Divider(),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Date"),
-                        ),
+                        labelText("Date"),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: TextField(
@@ -92,10 +80,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
                           ),
                         ),
                         Divider(),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Amount"),
-                        ),
+                        labelText("Amount"),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: TextField(
@@ -109,10 +94,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
                           ),
                         ),
                         Divider(),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Choose Account"),
-                        ),
+                        labelText("Choose Account"),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: TextField(
@@ -126,10 +108,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
                           ),
                         ),
                         Divider(),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Proof of Payment"),
-                        ),
+                        labelText("Proof of Payment"),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: InkWell(
