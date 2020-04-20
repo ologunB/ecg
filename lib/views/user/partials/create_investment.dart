@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'custom_button.dart';
+import '../../partials/custom_button.dart';
 
 class CreateInvestment extends StatefulWidget {
   @override

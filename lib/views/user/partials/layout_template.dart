@@ -1,7 +1,7 @@
 import 'package:ecgalpha/utils/styles.dart';
-import 'package:ecgalpha/views/partials/create_investment.dart';
 import 'package:ecgalpha/views/user/home/home_view.dart';
 import 'package:ecgalpha/views/user/orders/order_view.dart';
+import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:ecgalpha/views/user/profile/profile_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

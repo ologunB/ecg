@@ -1,5 +1,5 @@
 import 'package:ecgalpha/utils/carousel_slider.dart';
-import 'package:ecgalpha/views/user/orders/each_order_item.dart';
+import 'package:ecgalpha/views/partials/each_order_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

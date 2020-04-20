@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../each_order_item.dart';
+import '../../../partials/each_order_item.dart';
 import 'order_details.dart';
 
 class ConfirmedOrders extends StatefulWidget {
