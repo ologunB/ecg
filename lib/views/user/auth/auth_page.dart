@@ -1,30 +1,42 @@
+import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
-import 'package:ecgalpha/views/partials/custom_button.dart';
+import 'package:ecgalpha/views/partials/custom_loading_button.dart';
 import 'package:ecgalpha/views/user/auth/register_complete_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthPage extends StatefulWidget {
   @override
   _AuthPageState createState() => _AuthPageState();
 }
 
-class _AuthPageState extends State<AuthPage> {
+bool isLogin = true;
+TabController controller;
+
+class _AuthPageState extends State<AuthPage>
+    with SingleTickerProviderStateMixin {
+  @override
+  void initState() {
+    super.initState();
+    controller = new TabController(vsync: this, length: 2);
+  }
+
   String text1 = "Welcome! ";
   String text2 = "Login to continue ";
   String text3 = "Hello! ";
   String text4 = "Signup in a minute ";
 
-  bool isLogin = true;
   Widget presentWidget = LoginWidget();
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Stack(
         children: <Widget>[
           Column(
@@ -34,6 +46,7 @@ class _AuthPageState extends State<AuthPage> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                     colors: [
                       Styles.appPrimaryColor,
                       Colors.blue,
@@ -48,12 +61,9 @@ class _AuthPageState extends State<AuthPage> {
                 height: size.height / 2.5,
               ),
               Expanded(
-                child: Container(
-                  color: Colors.white,
-                ),
+                child: Container(),
               ),
               Container(
-                color: Colors.white,
                 padding: const EdgeInsets.only(bottom: 50),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
@@ -105,103 +115,92 @@ class _AuthPageState extends State<AuthPage> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 18.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    InkWell(
-                                      onTap: () {
-                                        if (presentWidget != LoginWidget()) {
-                                          setState(() {
-                                            presentWidget = LoginWidget();
-                                            isLogin = true;
-                                          });
-                                        }
-                                      },
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(
-                                            "Login",
-                                            style: TextStyle(
-                                                color: isLogin
-                                                    ? Colors.blue
-                                                    : Colors.grey,
-                                                fontSize: 22),
-                                          ),
-                                          isLogin
-                                              ? Container(
-                                                  padding:
-                                                      EdgeInsets.only(top: 5),
-                                                  width: 80,
-                                                  child: Divider(
-                                                    thickness: 3,
-                                                    height: 10.0,
-                                                    color: Colors.blue,
-                                                  ),
-                                                )
-                                              : Container()
-                                        ],
-                                      ),
+                              Row(
+                                children: <Widget>[
+                                  InkWell(
+                                    onTap: () {
+                                      if (presentWidget != LoginWidget()) {
+                                        setState(() {
+                                          presentWidget = LoginWidget();
+                                          isLogin = true;
+                                        });
+                                      }
+                                    },
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          "Login",
+                                          style: TextStyle(
+                                              color: isLogin
+                                                  ? Styles.appPrimaryColor
+                                                  : Colors.grey,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Container(
+                                          width: 80,
+                                          height: 5,
+                                          decoration: BoxDecoration(
+                                              color: isLogin
+                                                  ? Styles.appPrimaryColor
+                                                  : Colors.white,
+                                              borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(10),
+                                                  topLeft:
+                                                      Radius.circular(10))),
+                                        )
+                                      ],
                                     ),
-                                    SizedBox(width: 30),
-                                    InkWell(
-                                      onTap: () {
-                                        if (presentWidget != SignupWidget()) {
-                                          setState(() {
-                                            presentWidget = SignupWidget();
-                                            isLogin = false;
-                                          });
-                                        }
-                                      },
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(
-                                            "Signup",
-                                            style: TextStyle(
-                                                color: isLogin
-                                                    ? Colors.grey
-                                                    : Colors.blue,
-                                                fontSize: 22),
-                                          ),
-                                          isLogin
-                                              ? Container()
-                                              : Container(
-                                                  padding:
-                                                      EdgeInsets.only(top: 5),
-                                                  width: 80,
-                                                  child: Divider(
-                                                    thickness: 3,
-                                                    height: 10.0,
-                                                    color: Colors.blue,
-                                                  ),
-                                                )
-                                        ],
-                                      ),
+                                  ),
+                                  SizedBox(width: 30),
+                                  InkWell(
+                                    onTap: () {
+                                      if (presentWidget != SignupWidget()) {
+                                        setState(() {
+                                          presentWidget = SignupWidget();
+                                          isLogin = false;
+                                        });
+                                      }
+                                    },
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          "Signup",
+                                          style: TextStyle(
+                                              color: isLogin
+                                                  ? Colors.grey
+                                                  : Styles.appPrimaryColor,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Container(
+                                          width: 80,
+                                          height: 5,
+                                          decoration: BoxDecoration(
+                                              color: !isLogin
+                                                  ? Styles.appPrimaryColor
+                                                  : Colors.white,
+                                              borderRadius: BorderRadius.only(
+                                                  topRight: Radius.circular(10),
+                                                  topLeft:
+                                                      Radius.circular(10))),
+                                        )
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
+                              Divider(),
                               isLogin ? SizedBox(height: 70) : Container(),
                               presentWidget,
-                              SizedBox(height: 30),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: CustomButton(
-                                    title: isLogin ? "LOGIN" : "SIGNUP",
-                                    onPress: () {
-                                      Navigator.pushReplacement(
-                                          context,
-                                          CupertinoPageRoute(
-                                              builder: (context) =>
-                                                  RegisterCompleteScreen()));
-                                    }),
-                              )
                             ],
                           ),
                         )
@@ -216,117 +215,270 @@ class _AuthPageState extends State<AuthPage> {
   }
 }
 
+String validateEmail(value) {
+  Pattern pattern =
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  RegExp regex = new RegExp(pattern);
+  if (!regex.hasMatch(value)) {
+    return 'Enter Valid Email';
+  } else if (value.isEmpty) {
+    return 'Please enter your email!';
+  } else
+    return null;
+}
+
+FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+DatabaseReference _dataRef = FirebaseDatabase.instance.reference();
+
 class LoginWidget extends StatefulWidget {
   @override
   _LoginWidgetState createState() => _LoginWidgetState();
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
+  TextEditingController inEmail = TextEditingController();
+  TextEditingController inPassword = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+  bool checkedValue = false;
+  bool _autoValidate = false;
+
+  bool isLoading = false;
+  bool forgotPassIsLoading = false;
+
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  Future signIn(String email, String password) async {
+    setState(() {
+      isLoading = true;
+    });
+    await _firebaseAuth
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((value) {
+      FirebaseUser user = value.user;
+
+      if (value.user != null) {
+        if (!value.user.isEmailVerified) {
+          setState(() {
+            isLoading = false;
+          });
+          showToast("Email not verified", context);
+          _firebaseAuth.signOut();
+          return;
+        }
+
+        _dataRef
+            .child("User Collection")
+            .child(user.uid)
+            .once()
+            .then((snapshot) {
+          //   var kEYS = snapshot.value.keys;
+          var dATA = snapshot.value;
+
+          String type = dATA["Type"];
+
+          String uid = type == "User" ? "Uid" : "Admin Uid";
+          putInDB(type, dATA[uid], dATA["Email"], dATA["Name"]);
+
+          Navigator.of(context).pushReplacement(
+            CupertinoPageRoute(
+              builder: (context) => RegisterCompleteScreen(),
+            ),
+          );
+
+          showToast("Logged in", context);
+        }).catchError((ee) {
+          setState(() {
+            isLoading = false;
+          });
+          showToast(ee.toString(), context);
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        showToast("User doesn't exist", context);
+      }
+      return;
+    }).catchError((e) {
+      showToast("$e", context);
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    });
+  }
+
+  Future putInDB(String type, String uid, String email, String name) async {
+    final SharedPreferences prefs = await _prefs;
+    setState(() {
+      prefs.setBool("isLoggedIn", true);
+      prefs.setString("uid", uid);
+      prefs.setString("email", email);
+      prefs.setString("name", name);
+      prefs.setString("type", type);
+    });
+    _firebaseAuth.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Theme(
-                  data: ThemeData(
-                      primaryColor: Colors.grey, hintColor: Colors.grey),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.mail, color: Colors.grey),
+    return Form(
+      key: _formKey,
+      autovalidate: _autoValidate,
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Theme(
+                    data: ThemeData(
+                        primaryColor: Colors.grey, hintColor: Colors.grey),
+                    child: TextFormField(
+                      controller: inEmail,
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(Icons.mail, color: Colors.grey),
+                        ),
+                        contentPadding: EdgeInsets.all(10),
+                        hintText: 'Email',
+                        hintStyle: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
                       ),
-                      contentPadding: EdgeInsets.all(10),
-                      hintText: 'Email',
-                      hintStyle: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 22,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 19,
                           fontWeight: FontWeight.w400),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: validateEmail,
                     ),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Theme(
-                  data: ThemeData(
-                      primaryColor: Colors.grey, hintColor: Colors.grey),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.vpn_key, color: Colors.grey),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Theme(
+                    data: ThemeData(
+                        primaryColor: Colors.grey, hintColor: Colors.grey),
+                    child: TextFormField(
+                      obscureText: true,
+                      keyboardType: TextInputType.text,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter your password!';
+                        } else if (value.length < 6) {
+                          return 'Password must be greater than 6 characters!';
+                        }
+                        return null;
+                      },
+                      controller: inPassword,
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(Icons.vpn_key, color: Colors.grey),
+                        ),
+                        contentPadding: EdgeInsets.all(10),
+                        hintText: 'Password',
+                        hintStyle: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
                       ),
-                      contentPadding: EdgeInsets.all(10),
-                      hintText: 'Password',
-                      hintStyle: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 22,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 19,
                           fontWeight: FontWeight.w400),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
                     ),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(children: <Widget>[
-              Checkbox(
-                value: true,
-                onChanged: (newValue) {
-                  setState(() {
-                    // checkedValue = newValue;
-                  });
-                },
-                activeColor: Colors.deepOrange,
-                checkColor: Colors.white,
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(children: <Widget>[
+                Checkbox(
+                  value: checkedValue,
+                  onChanged: (newValue) {
+                    setState(() {
+                      checkedValue = !checkedValue;
+                    });
+                  },
+                  activeColor: Colors.deepOrange,
+                  checkColor: Colors.white,
+                ),
+                Text("Remember me",
+                    style: TextStyle(fontSize: 15, color: Colors.black)),
+              ]),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  "Forgot Password?",
+                  style: TextStyle(color: Styles.appPrimaryColor, fontSize: 15),
+                ),
               ),
-              Text("Remember me",
-                  style: TextStyle(fontSize: 15, color: Colors.black)),
-            ]),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                "Forgot Password?",
-                style: TextStyle(color: Colors.blue, fontSize: 15),
-              ),
+            ],
+          ),
+          SizedBox(height: 30),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CustomLoadingButton(
+              title: isLoading ? "" : "LOGIN",
+              onPress: isLoading
+                  ? null
+                  : () {
+                      _formKey.currentState.save();
+                      _formKey.currentState.validate();
+
+                      setState(() {
+                        _autoValidate = true;
+                      });
+
+                      if (_formKey.currentState.validate()) {
+                        signIn(inEmail.text, inPassword.text);
+                        /*        Navigator.pushReplacement(
+                            context,
+                            CupertinoPageRoute(
+                                builder: (context) =>
+                                    RegisterCompleteScreen()));*/
+                      }
+                    },
+              icon: isLoading
+                  ? CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                    )
+                  : Icon(
+                      Icons.done,
+                      color: Colors.white,
+                    ),
+              iconLeft: false,
             ),
-          ],
-        ),
-      ],
-      mainAxisSize: MainAxisSize.min,
+          )
+        ],
+        mainAxisSize: MainAxisSize.min,
+      ),
     );
   }
 }
@@ -337,167 +489,286 @@ class SignupWidget extends StatefulWidget {
 }
 
 class _SignupWidgetState extends State<SignupWidget> {
+  TextEditingController upFName = TextEditingController();
+  TextEditingController upEmail = TextEditingController();
+  TextEditingController upPassword = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+  bool checkedValue = false;
+  bool _autoValidate = false;
+
+  bool isLoading = false;
+
+  Future userSignUp(String fullName, String email, String password) async {
+    setState(() {
+      isLoading = true;
+    });
+    await _firebaseAuth
+        .createUserWithEmailAndPassword(email: email, password: password)
+        .then((value) {
+      FirebaseUser user = value.user;
+
+      if (value.user != null) {
+        user.sendEmailVerification().then((v) {
+          Map<String, Object> mData = Map();
+          mData.putIfAbsent("Full Name", () => upFName.text);
+          mData.putIfAbsent("Email", () => upEmail.text);
+          mData.putIfAbsent("Confirmed", () => "0");
+          mData.putIfAbsent("Pending", () => "0");
+          mData.putIfAbsent("Type", () => "User");
+          mData.putIfAbsent("Bank Name", () => " ");
+          mData.putIfAbsent("Bank Number", () => " ");
+          mData.putIfAbsent("Account Name", () => " ");
+          mData.putIfAbsent("Uid", () => user.uid);
+
+          _dataRef
+              .child("User Collection")
+              .child(user.uid)
+              .set(mData)
+              .then((b) {
+            showToast("User created, Check email for verification!", context);
+            setState(() {
+              isLoading = false;
+              isLogin = true;
+            });
+            //_tabController.animateTo(0);
+          });
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        showToast("User doesn't exist", context);
+      }
+      return;
+    }).catchError((e) {
+      showToast("$e", context);
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Theme(
-                  data: ThemeData(
-                      primaryColor: Colors.grey, hintColor: Colors.grey),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.person, color: Colors.grey),
-                      ),
-                      contentPadding: EdgeInsets.all(10),
-                      hintText: 'Username',
-                      hintStyle: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 22,
-                          fontWeight: FontWeight.w400),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    ),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Theme(
-                  data: ThemeData(
-                      primaryColor: Colors.grey, hintColor: Colors.grey),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.mail, color: Colors.grey),
-                      ),
-                      contentPadding: EdgeInsets.all(10),
-                      hintText: 'Email',
-                      hintStyle: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 22,
-                          fontWeight: FontWeight.w400),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    ),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Theme(
-                  data: ThemeData(
-                      primaryColor: Colors.grey, hintColor: Colors.grey),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(Icons.vpn_key, color: Colors.grey),
-                      ),
-                      contentPadding: EdgeInsets.all(10),
-                      hintText: 'Password',
-                      hintStyle: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 22,
-                          fontWeight: FontWeight.w400),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    ),
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            //  mainAxisSize: MainAxisSize.max,
+    return Form(
+      key: _formKey,
+      autovalidate: _autoValidate,
+      child: Column(
+        children: <Widget>[
+          Row(
             children: <Widget>[
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                    text: "By signing up you agree to our ",
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey),
-                    children: <TextSpan>[
-                      TextSpan(
-                          text: 'Terms and Condition',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Styles.appPrimaryColor),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              // navigate to desired screen
-                            }),
-                      TextSpan(
-                        text: ' and ',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Theme(
+                    data: ThemeData(
+                        primaryColor: Colors.grey, hintColor: Colors.grey),
+                    child: TextFormField(
+                      keyboardType: TextInputType.text,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter your Full name!';
+                        } else if (value.length < 6) {
+                          return 'Characters must be greater than 6 characters!';
+                        }
+                        return null;
+                      },
+                      controller: upFName,
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(Icons.person, color: Colors.grey),
+                        ),
+                        contentPadding: EdgeInsets.all(10),
+                        hintText: 'Full Name',
+                        hintStyle: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
                       ),
-                      TextSpan(
-                          text: 'Privacy Policy',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Styles.appPrimaryColor),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              // navigate to desired screen
-                            }),
-                    ]),
-              )
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 19,
+                          fontWeight: FontWeight.w400),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
-        )
-      ],
-      mainAxisSize: MainAxisSize.min,
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Theme(
+                    data: ThemeData(
+                        primaryColor: Colors.grey, hintColor: Colors.grey),
+                    child: TextFormField(
+                      keyboardType: TextInputType.emailAddress,
+                      validator: validateEmail,
+                      controller: upEmail,
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(Icons.mail, color: Colors.grey),
+                        ),
+                        contentPadding: EdgeInsets.all(10),
+                        hintText: 'Email',
+                        hintStyle: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 19,
+                          fontWeight: FontWeight.w400),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Theme(
+                    data: ThemeData(
+                        primaryColor: Colors.grey, hintColor: Colors.grey),
+                    child: TextFormField(
+                      obscureText: true,
+                      keyboardType: TextInputType.text,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter your password!';
+                        } else if (value.length < 6) {
+                          return 'Password must be greater than 6 characters!';
+                        }
+                        return null;
+                      },
+                      controller: upPassword,
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(Icons.vpn_key, color: Colors.grey),
+                        ),
+                        contentPadding: EdgeInsets.all(10),
+                        hintText: 'Password',
+                        hintStyle: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 19,
+                          fontWeight: FontWeight.w400),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              //  mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                      text: "By signing up you agree to our ",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: 'Terms and Condition',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: Styles.appPrimaryColor),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                // navigate to desired screen
+                              }),
+                        TextSpan(
+                          text: ' and ',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey),
+                        ),
+                        TextSpan(
+                            text: 'Privacy Policy',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: Styles.appPrimaryColor),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                // navigate to desired screen
+                              }),
+                      ]),
+                )
+              ],
+            ),
+          ),
+          SizedBox(height: 30),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CustomLoadingButton(
+              title: isLoading ? "" : "SIGNUP",
+              onPress: isLoading
+                  ? null
+                  : () {
+                      _formKey.currentState.save();
+                      _formKey.currentState.validate();
+
+                      setState(() {
+                        _autoValidate = true;
+                      });
+
+                      if (_formKey.currentState.validate()) {
+                        userSignUp(upFName.text, upEmail.text, upPassword.text);
+                      }
+                    },
+              icon: isLoading
+                  ? CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                    )
+                  : Icon(
+                      Icons.done,
+                      color: Colors.white,
+                    ),
+              iconLeft: false,
+            ),
+          )
+        ],
+        mainAxisSize: MainAxisSize.min,
+      ),
     );
   }
 }

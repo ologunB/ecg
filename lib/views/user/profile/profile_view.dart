@@ -1,8 +1,10 @@
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/views/user/auth/auth_page.dart';
 import 'package:ecgalpha/views/user/profile/change_password.dart';
 import 'package:ecgalpha/views/user/profile/update_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileView extends StatefulWidget {
   ProfileView({Key key}) : super(key: key);
@@ -101,27 +103,7 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                     ),
                     InkWell(
-                      onTap: () {
-                        showBottomSheet(
-                            elevation: 5,
-                            context: context,
-                            builder: (context) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(20))),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    ListTile(
-                                      title: Text("Mama"),
-                                    )
-                                  ],
-                                ),
-                              );
-                            });
-                      },
+                      onTap: () {},
                       child: Container(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
@@ -226,8 +208,28 @@ class _ProfileViewState extends State<ProfileView> {
                                       ),
                                     ),
                                     InkWell(
-                                      onTap: () {
+                                      onTap: () async {
+                                        Future<SharedPreferences> _prefs =
+                                            SharedPreferences.getInstance();
+
+                                        final SharedPreferences prefs =
+                                            await _prefs;
+
+                                        setState(() {
+                                          prefs.setBool("isLoggedIn", false);
+                                          prefs.remove("type");
+                                          prefs.remove("uid");
+                                          prefs.remove("email");
+                                          prefs.remove("name");
+                                        });
+
                                         Navigator.pop(context);
+                                        Navigator.pushReplacement(
+                                          context,
+                                          CupertinoPageRoute(
+                                            builder: (context) => AuthPage(),
+                                          ),
+                                        );
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),

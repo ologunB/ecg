@@ -1,3 +1,6 @@
+import 'package:ecgalpha/utils/toast.dart';
+import 'package:flutter/cupertino.dart';
+
 class Constants {
   static bool testing = false;
 
@@ -16,4 +19,8 @@ class Constants {
   static String longLoremText =
       "Lorem ipsum dolor sit amet,  tempor incididu gna aliqua. Ut enim ad minim veniam, quis nostrud exercitation";
   static List<String> userType = ["Car Owner", "Service Station"];
+}
+
+showToast(String msg, BuildContext context) {
+  Toast.show(msg, context, duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
 }
