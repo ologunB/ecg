@@ -1,7 +1,9 @@
 import 'package:ecgalpha/utils/carousel_slider.dart';
+import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/views/partials/each_order_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'notification_page.dart';
 
@@ -13,6 +15,45 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
+  Future<String> uid, email, name, type, bName, aName, bNum;
+
+  @override
+  void initState() {
+    super.initState();
+
+    uid = _prefs.then((prefs) {
+      return (prefs.getString('uid') ?? "customerUID");
+    });
+    email = _prefs.then((prefs) {
+      return (prefs.getString('email') ?? "customerEmail");
+    });
+    name = _prefs.then((prefs) {
+      return (prefs.getString('name') ?? "customerName");
+    });
+    bName = _prefs.then((prefs) {
+      return (prefs.getString('Bank Name') ?? "bankName");
+    });
+    aName = _prefs.then((prefs) {
+      return (prefs.getString('Account Name') ?? "accName");
+    });
+    bNum = _prefs.then((prefs) {
+      return (prefs.getString('Account Number') ?? "accNum");
+    });
+
+    doAssign();
+  }
+
+  void doAssign() async {
+    MY_NAME = await name;
+    MY_UID = await uid;
+    MY_EMAIL = await email;
+    MY_ACCOUNT_NUMBER = await bNum;
+    MY_BANK_ACCOUNT_NAME = await aName;
+    MY_BANK_NAME = await bName;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -35,13 +76,26 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ),
                       SizedBox(width: 10),
-                      Text(
-                        "Hi, Mayowa",
-                        style: TextStyle(
-                            fontSize: 22,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600),
-                      ),
+                      FutureBuilder(
+                          future: name,
+                          builder: (context, snap) {
+                            if (snap.connectionState == ConnectionState.done) {
+                              return Text(
+                                "Hi, ${snap.data}",
+                                style: TextStyle(
+                                    fontSize: 22,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600),
+                              );
+                            }
+                            return Text(
+                              "Hi,  ",
+                              style: TextStyle(
+                                  fontSize: 22,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w600),
+                            );
+                          }),
                     ],
                   ),
                 ),
@@ -49,7 +103,7 @@ class _HomeViewState extends State<HomeView> {
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
                       icon: Icon(Icons.notifications),
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.push(
                             context,
                             CupertinoPageRoute(
@@ -96,25 +150,14 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ),
                           Align(
-                            alignment: Alignment.bottomLeft,
-                            child: ListTile(
-                              title: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Advertise on this space",
-                                  style: TextStyle(
-                                      backgroundColor: Colors.blueAccent,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.white),
-                                ),
-                              ),
-                              subtitle: Text("",
-                                  style: TextStyle(
-                                      backgroundColor: Colors.white,
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.blueAccent)),
+                            alignment: Alignment.bottomCenter,
+                            child: Text(
+                              "Advertise on this space",
+                              style: TextStyle(
+                                  backgroundColor: Colors.blueAccent,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white),
                             ),
                           )
                         ],

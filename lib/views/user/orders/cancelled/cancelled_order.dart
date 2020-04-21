@@ -1,3 +1,4 @@
+import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/views/user/orders/confirmed/order_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,7 @@ class _CancelledOrdersState extends State<CancelledOrders> {
                         color: Colors.red,
                       ),
                       SizedBox(width: 10),
-                      Text("₦5000",
+                      Text(oCcy.format(5000),
                           style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w800,

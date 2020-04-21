@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:ecgalpha/utils/toast.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 class Constants {
   static bool testing = false;
@@ -21,6 +24,31 @@ class Constants {
   static List<String> userType = ["Car Owner", "Service Station"];
 }
 
+// ignore: non_constant_identifier_names
+String MY_NAME,
+    MY_UID,
+    MY_EMAIL,
+    MY_BANK_ACCOUNT_NAME,
+    MY_ACCOUNT_NUMBER,
+    MY_BANK_NAME;
+
 showToast(String msg, BuildContext context) {
   Toast.show(msg, context, duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
 }
+
+const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+String randomString() {
+  Random rnd = Random(DateTime.now().millisecondsSinceEpoch);
+  String result = "";
+  for (var i = 0; i < 12; i++) {
+    result += chars[rnd.nextInt(chars.length)];
+  }
+  return result;
+}
+
+String thePresentTime() {
+  return DateFormat("MMM d, yyyy HH:mm a").format(DateTime.now());
+}
+
+final oCcy = new NumberFormat("#,##0", "en_US");

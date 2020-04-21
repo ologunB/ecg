@@ -1,7 +1,11 @@
 import 'dart:io';
 
+import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/views/user/orders/confirmed/order_confirmed_done.dart';
 import 'package:ecgalpha/views/user/profile/change_password.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -14,28 +18,45 @@ class CreateInvestment extends StatefulWidget {
   _PaymentMethodState createState() => _PaymentMethodState();
 }
 
+class Account {
+  String name, number, bank;
+  Account(this.name, this.number, this.bank);
+}
+
+List accounts = [
+  Account("Ologun Richard", "0209339392", "GTBank"),
+  Account("Adebayo Richard", "0203439392", "First Bank")
+];
+
 class _PaymentMethodState extends State<CreateInvestment> {
-  File image;
+  File pop;
   Future getImage() async {
     var img = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     setState(() {
-      image = img;
+      pop = img;
     });
   }
 
+  TextEditingController name = TextEditingController(text: MY_NAME);
+  TextEditingController date = TextEditingController(text: thePresentTime());
+  TextEditingController amount = TextEditingController();
+
+  bool isLoading = false;
+  bool checkedValue = false;
+  Account selectedAccount;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey[200],
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
           elevation: 0.0,
           centerTitle: true,
           title: Text(
-            "Create new Investment",
+            "Create New Investment",
             style: TextStyle(
                 color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
           ),
@@ -52,7 +73,23 @@ class _PaymentMethodState extends State<CreateInvestment> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        labelText("Name"),
+                        text("Name"),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: TextFormField(
+                            enabled: false,
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Enter here"),
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
+                            controller: name,
+                          ),
+                        ),
+                        Divider(),
+                        text("Date"),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: TextField(
@@ -63,59 +100,92 @@ class _PaymentMethodState extends State<CreateInvestment> {
                               fontSize: 20,
                               color: Colors.black,
                             ),
+                            enabled: false,
+                            controller: date,
                           ),
                         ),
                         Divider(),
-                        labelText("Date"),
+                        text("Amount"),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: TextField(
+                          child: TextFormField(
                             decoration: InputDecoration(
+                                prefixText: "₦",
+                                prefixStyle: TextStyle(fontSize: 22),
                                 border: InputBorder.none,
                                 hintText: "Enter here"),
+                            onChanged: (a) {},
                             style: TextStyle(
                               fontSize: 20,
                               color: Colors.black,
                             ),
+                            controller: amount,
+                            keyboardType: TextInputType.number,
                           ),
                         ),
                         Divider(),
-                        labelText("Amount"),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Enter here"),
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
+                        text("Choose Account"),
+                        DropdownButton<Account>(
+                          hint: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Text("Select the account you sent to"),
                           ),
+                          value: selectedAccount,
+                          underline: SizedBox(),
+                          items: accounts.map((value) {
+                            return DropdownMenuItem<Account>(
+                              value: value,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          value.name,
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: <Widget>[
+                                            Text(value.number),
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Text(value.bank)
+                                          ],
+                                        )
+                                      ],
+                                      mainAxisSize: MainAxisSize.min,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          isExpanded: true,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedAccount = value;
+                            });
+                          },
                         ),
                         Divider(),
-                        labelText("Choose Account"),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: TextField(
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Enter here"),
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        Divider(),
-                        labelText("Proof of Payment"),
+                        text("Proof of Payment"),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: InkWell(
                             onTap: () {
                               getImage();
                             },
-                            child: image == null
+                            child: pop == null
                                 ? Container(
                                     height: 100,
                                     color: Colors.blueAccent[100],
@@ -132,7 +202,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
                                   )
                                 : Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Image.file(image,
+                                    child: Image.file(pop,
                                         height: 100, fit: BoxFit.contain),
                                   ),
                           ),
@@ -140,7 +210,13 @@ class _PaymentMethodState extends State<CreateInvestment> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            Checkbox(value: true, onChanged: (val) {}),
+                            Checkbox(
+                                value: checkedValue,
+                                onChanged: (val) {
+                                  setState(() {
+                                    checkedValue = val;
+                                  });
+                                }),
                             Flexible(
                               child: Text(
                                 "I uploaded proof of payment",
@@ -173,70 +249,94 @@ class _PaymentMethodState extends State<CreateInvestment> {
           child: CustomButton(
               title: "Confirm Order",
               onPress: () {
+                if (!checkedValue || pop == null) {
+                  showToast("Upload a Proof of Payment!", context);
+                  return;
+                }
+                if (amount.text.isEmpty || selectedAccount == null) {
+                  showToast("Fill all values!", context);
+                  return;
+                }
                 showDialog(
                     context: context,
                     barrierDismissible: true,
                     builder: (_) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(25.0),
-                          ),
-                        ),
-                        child: AlertDialog(
-                          title: Center(
-                            child: Text(
-                              "Are you sure you have fulfilled this investment?",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          content: Container(
-                            child: Text(
-                              "Make sure you have sent the investment to the given account number",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
+                      return StatefulBuilder(
+                        builder: (context, _setState) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(25.0),
                               ),
                             ),
-                          ),
-                          actions: <Widget>[
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                            child: AlertDialog(
+                              title: Center(
                                 child: Text(
-                                  "CANCEL",
+                                  isLoading
+                                      ? "Processing"
+                                      : "Are you sure you have fulfilled this investment?",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w400),
+                                      color: Colors.black,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "YES",
-                                  style: TextStyle(
-                                      color: Styles.appPrimaryColor,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w400),
-                                ),
+                              content: Container(
+                                child: isLoading
+                                    ? Container(
+                                        alignment: Alignment.center,
+                                        height: 100,
+                                        width: 100,
+                                        child: CircularProgressIndicator())
+                                    : Text(
+                                        "Make sure you have sent the investment to the given account number",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 20,
+                                        ),
+                                      ),
                               ),
-                            )
-                          ],
-                        ),
+                              actions: <Widget>[
+                                InkWell(
+                                  onTap: isLoading
+                                      ? null
+                                      : () {
+                                          Navigator.pop(context);
+                                        },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      isLoading ? "" : "CANCEL",
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: isLoading
+                                      ? null
+                                      : () {
+                                          confirmPayment(_setState);
+                                        },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      isLoading ? "" : "YES",
+                                      style: TextStyle(
+                                          color: Styles.appPrimaryColor,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        },
                       );
                     });
               }),
@@ -244,4 +344,49 @@ class _PaymentMethodState extends State<CreateInvestment> {
       ),
     );
   }
+
+  void confirmPayment(_setState) async {
+    Map<String, Object> mData = Map();
+    mData.putIfAbsent("Name", () => MY_NAME);
+    mData.putIfAbsent("Date", () => thePresentTime());
+    mData.putIfAbsent("Amount", () => amount.text);
+    String t = selectedAccount.name + "  " + selectedAccount.bank;
+    mData.putIfAbsent("Account Paid", () => t);
+    mData.putIfAbsent("Uid", () => MY_UID);
+
+    if (pop != null) {
+      _setState(() {
+        isLoading = true;
+      });
+      StorageReference storeRef = _storageRef.child("images/${randomString()}");
+      StorageUploadTask uploadTask = storeRef.putFile(pop);
+      StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
+      String url = (await downloadUrl.ref.getDownloadURL());
+      mData.putIfAbsent("POP", () => url);
+
+      rootRef
+          .child("Transactions")
+          .child("Pending")
+          .child(MY_UID)
+          .push()
+          .set(mData)
+          .then((val) {
+        _setState(() {
+          isLoading = true;
+        });
+        Navigator.pushReplacement(
+            context,
+            CupertinoPageRoute(
+                builder: (context) => OrderConfirmedDone(),
+                fullscreenDialog: true));
+      }).catchError((e) {
+        _setState(() {
+          isLoading = false;
+        });
+      });
+    }
+  }
 }
+
+var rootRef = FirebaseDatabase.instance.reference();
+var _storageRef = FirebaseStorage.instance.ref();

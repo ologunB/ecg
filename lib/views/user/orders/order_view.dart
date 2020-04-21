@@ -37,19 +37,19 @@ class _OrdersViewState extends State<OrdersView>
                 Tab(
                   child: Align(
                     alignment: Alignment.center,
-                    child: Text(
-                      "Confirmed",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
+                    child: Text("Pending",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
                 ),
                 Tab(
                   child: Align(
                     alignment: Alignment.center,
-                    child: Text("Pending",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      "Confirmed",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
                 Tab(
@@ -72,8 +72,8 @@ class _OrdersViewState extends State<OrdersView>
           height: double.infinity,
           width: double.infinity,
           child: TabBarView(children: [
-            ConfirmedOrders(),
             OngoingOrders(),
+            ConfirmedOrders(),
             CancelledOrders()
           ]),
         ),

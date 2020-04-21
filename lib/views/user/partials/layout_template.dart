@@ -3,17 +3,18 @@ import 'package:ecgalpha/views/user/home/home_view.dart';
 import 'package:ecgalpha/views/user/orders/order_view.dart';
 import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:ecgalpha/views/user/profile/profile_view.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LayoutTemplate extends StatefulWidget {
+  int pageSelectedIndex = 0;
+  LayoutTemplate({this.pageSelectedIndex});
   @override
   _LayoutTemplateState createState() => _LayoutTemplateState();
 }
 
 class _LayoutTemplateState extends State<LayoutTemplate> {
-  int pageSelectedIndex = 0;
-
   final List<Widget> pages = [
     HomeView(
       key: PageStorageKey('Page1'),
@@ -31,7 +32,7 @@ class _LayoutTemplateState extends State<LayoutTemplate> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageStorage(
-        child: pages[pageSelectedIndex],
+        child: pages[widget.pageSelectedIndex],
         bucket: bucket,
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -39,27 +40,27 @@ class _LayoutTemplateState extends State<LayoutTemplate> {
           elevation: 15,
           onTap: (i) {
             setState(() {
-              pageSelectedIndex = i;
+              widget.pageSelectedIndex = i;
             });
           },
-          currentIndex: pageSelectedIndex,
+          currentIndex: widget.pageSelectedIndex,
           selectedItemColor: Styles.appPrimaryColor,
           unselectedItemColor: Colors.grey,
           showUnselectedLabels: true,
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.home),
+                icon: Icon(EvaIcons.home),
                 title: Text(
                   "Home",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                 )),
             BottomNavigationBarItem(
-                icon: Icon(Icons.payment),
+                icon: Icon(EvaIcons.creditCard),
                 title: Text("Investment",
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.w500))),
             BottomNavigationBarItem(
-                icon: Icon(Icons.person),
+                icon: Icon(EvaIcons.person),
                 title: Text("Profile",
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.w500))),

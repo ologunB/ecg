@@ -2,6 +2,7 @@ import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/user/auth/auth_page.dart';
 import 'package:ecgalpha/views/user/profile/change_password.dart';
 import 'package:ecgalpha/views/user/profile/update_details.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -150,7 +151,9 @@ class _ProfileViewState extends State<ProfileView> {
                                 child: Text(
                                   "Change Password",
                                   style: TextStyle(
-                                      fontSize: 20, color: Colors.black),
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
                             )
@@ -222,6 +225,7 @@ class _ProfileViewState extends State<ProfileView> {
                                           prefs.remove("email");
                                           prefs.remove("name");
                                         });
+                                        FirebaseAuth.instance.signOut();
 
                                         Navigator.pop(context);
                                         Navigator.pushReplacement(

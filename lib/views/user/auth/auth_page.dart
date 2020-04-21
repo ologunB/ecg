@@ -15,6 +15,21 @@ class AuthPage extends StatefulWidget {
   _AuthPageState createState() => _AuthPageState();
 }
 
+String validateEmail(value) {
+  Pattern pattern =
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  RegExp regex = new RegExp(pattern);
+  if (!regex.hasMatch(value)) {
+    return 'Enter Valid Email';
+  } else if (value.isEmpty) {
+    return 'Please enter your email!';
+  } else
+    return null;
+}
+
+FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+DatabaseReference _dataRef = FirebaseDatabase.instance.reference();
+
 bool isLogin = true;
 TabController controller;
 
@@ -85,7 +100,7 @@ class _AuthPageState extends State<AuthPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: 10),
+                  SizedBox(height: 40),
                   Text(
                     isLogin ? text1 : text3,
                     style: TextStyle(
@@ -215,21 +230,6 @@ class _AuthPageState extends State<AuthPage>
   }
 }
 
-String validateEmail(value) {
-  Pattern pattern =
-      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-  RegExp regex = new RegExp(pattern);
-  if (!regex.hasMatch(value)) {
-    return 'Enter Valid Email';
-  } else if (value.isEmpty) {
-    return 'Please enter your email!';
-  } else
-    return null;
-}
-
-FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-DatabaseReference _dataRef = FirebaseDatabase.instance.reference();
-
 class LoginWidget extends StatefulWidget {
   @override
   _LoginWidgetState createState() => _LoginWidgetState();
@@ -278,15 +278,20 @@ class _LoginWidgetState extends State<LoginWidget> {
           String type = dATA["Type"];
 
           String uid = type == "User" ? "Uid" : "Admin Uid";
-          putInDB(type, dATA[uid], dATA["Email"], dATA["Name"]);
 
+          putInDB(
+              type: type,
+              uid: dATA[uid],
+              name: dATA["Full Name"],
+              email: dATA["Email"],
+              bName: dATA["Bank Name"],
+              aName: dATA["Account Name"],
+              aNum: dATA["Bank Number"]);
           Navigator.of(context).pushReplacement(
             CupertinoPageRoute(
               builder: (context) => RegisterCompleteScreen(),
             ),
           );
-
-          showToast("Logged in", context);
         }).catchError((ee) {
           setState(() {
             isLoading = false;
@@ -309,7 +314,14 @@ class _LoginWidgetState extends State<LoginWidget> {
     });
   }
 
-  Future putInDB(String type, String uid, String email, String name) async {
+  Future putInDB(
+      {String type,
+      String uid,
+      String email,
+      String name,
+      String aName,
+      String aNum,
+      String bName}) async {
     final SharedPreferences prefs = await _prefs;
     setState(() {
       prefs.setBool("isLoggedIn", true);
@@ -317,8 +329,10 @@ class _LoginWidgetState extends State<LoginWidget> {
       prefs.setString("email", email);
       prefs.setString("name", name);
       prefs.setString("type", type);
+      prefs.setString("Bank Name", bName);
+      prefs.setString("Account Number", aNum);
+      prefs.setString("Account Name", aName);
     });
-    _firebaseAuth.signOut();
   }
 
   @override

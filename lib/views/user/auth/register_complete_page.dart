@@ -10,6 +10,15 @@ class RegisterCompleteScreen extends StatefulWidget {
 
 class _RegisterCompleteScreenState extends State<RegisterCompleteScreen> {
   @override
+  void initState() {
+    Future.delayed(Duration(milliseconds: 5000)).then((c) {
+      Navigator.of(context).pushReplacement(CupertinoPageRoute(
+          builder: (context) => LayoutTemplate(pageSelectedIndex: 0)));
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: InkWell(
