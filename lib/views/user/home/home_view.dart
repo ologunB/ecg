@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecgalpha/utils/carousel_slider.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
@@ -18,7 +19,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  Future<String> uid, email, name, type, bName, aName, bNum;
+  Future<String> uid, email, name, type, bName, aName, bNum, image;
 
   @override
   void initState() {
@@ -42,6 +43,9 @@ class _HomeViewState extends State<HomeView> {
     bNum = _prefs.then((prefs) {
       return (prefs.getString('Account Number') ?? "accNum");
     });
+    image = _prefs.then((prefs) {
+      return (prefs.getString('image') ?? "image");
+    });
 
     doAssign();
   }
@@ -53,6 +57,7 @@ class _HomeViewState extends State<HomeView> {
     MY_ACCOUNT_NUMBER = await bNum;
     MY_BANK_ACCOUNT_NAME = await aName;
     MY_BANK_NAME = await bName;
+    MY_IMAGE = await image;
   }
 
   @override
@@ -70,13 +75,37 @@ class _HomeViewState extends State<HomeView> {
                   Expanded(
                     child: Row(
                       children: <Widget>[
-                        CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Colors.white,
-                          backgroundImage: AssetImage(
-                            "assets/images/person.png",
-                          ),
-                        ),
+                        FutureBuilder(
+                            future: image,
+                            builder: (context, snap) {
+                              if (snap.connectionState ==
+                                  ConnectionState.done) {
+                                return CachedNetworkImage(
+                                  imageUrl: MY_IMAGE.isEmpty ? "ma" : MY_IMAGE,
+                                  height: 50,
+                                  width: 50,
+                                  placeholder: (context, url) => Image(
+                                      image: AssetImage(
+                                          "assets/images/person.png"),
+                                      height: 50,
+                                      width: 50,
+                                      fit: BoxFit.contain),
+                                  errorWidget: (context, url, error) => Image(
+                                      image: AssetImage(
+                                          "assets/images/person.png"),
+                                      height: 50,
+                                      width: 50,
+                                      fit: BoxFit.contain),
+                                );
+                              }
+                              return CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Colors.white,
+                                backgroundImage: AssetImage(
+                                  "assets/images/person.png",
+                                ),
+                              );
+                            }),
                         SizedBox(width: 10),
                         FutureBuilder(
                             future: name,

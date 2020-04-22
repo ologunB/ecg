@@ -50,8 +50,8 @@ class _EachOrderItemState extends State<EachOrderItem> {
                     child: Text(
                       widget.investment.id.substring(0, 10),
                       style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
+                          fontSize: 19,
+                          fontWeight: FontWeight.w600,
                           color: Colors.black),
                     ),
                   ),

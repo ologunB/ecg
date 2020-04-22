@@ -284,6 +284,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               uid: dATA[uid],
               name: dATA["Full Name"],
               email: dATA["Email"],
+              image: dATA["Avatar"],
               bName: dATA["Bank Name"],
               aName: dATA["Account Name"],
               aNum: dATA["Bank Number"]);
@@ -321,7 +322,8 @@ class _LoginWidgetState extends State<LoginWidget> {
       String name,
       String aName,
       String aNum,
-      String bName}) async {
+      String bName,
+      String image}) async {
     final SharedPreferences prefs = await _prefs;
     setState(() {
       prefs.setBool("isLoggedIn", true);
@@ -329,6 +331,7 @@ class _LoginWidgetState extends State<LoginWidget> {
       prefs.setString("email", email);
       prefs.setString("name", name);
       prefs.setString("type", type);
+      prefs.setString("image", image);
       prefs.setString("Bank Name", bName);
       prefs.setString("Account Number", aNum);
       prefs.setString("Account Name", aName);
@@ -534,6 +537,7 @@ class _SignupWidgetState extends State<SignupWidget> {
           mData.putIfAbsent("Bank Number", () => " ");
           mData.putIfAbsent("Account Name", () => " ");
           mData.putIfAbsent("Uid", () => user.uid);
+          mData.putIfAbsent("Avatar", () => "");
 
           _dataRef
               .child("User Collection")

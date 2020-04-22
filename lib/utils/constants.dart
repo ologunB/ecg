@@ -30,7 +30,8 @@ String MY_NAME,
     MY_EMAIL,
     MY_BANK_ACCOUNT_NAME,
     MY_ACCOUNT_NUMBER,
-    MY_BANK_NAME;
+    MY_BANK_NAME,
+    MY_IMAGE;
 
 showToast(String msg, BuildContext context) {
   Toast.show(msg, context, duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);

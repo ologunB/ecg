@@ -55,12 +55,12 @@ class _MyWrapperState extends State<MyWrapper> {
           return Scaffold(
             body: Container(
               decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(
+                  /*    image: DecorationImage(
+                image: AssetImage(
                       "assets/images/app_back.jpg",
                     ),
-                    fit: BoxFit.fill),
-              ),
+                    fit: BoxFit.fill),*/
+                  ),
             ),
           );
         });

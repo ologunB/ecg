@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/user/auth/auth_page.dart';
 import 'package:ecgalpha/views/user/partials/create_investment.dart';
@@ -6,6 +10,7 @@ import 'package:ecgalpha/views/user/profile/update_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileView extends StatefulWidget {
@@ -16,6 +21,23 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  File image;
+  Future getImageGallery() async {
+    var img = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      image = img;
+    });
+  }
+
+  Future getImageCamera() async {
+    var img = await ImagePicker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      image = img;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -29,20 +51,89 @@ class _ProfileViewState extends State<ProfileView> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundImage: AssetImage(
-                    "assets/images/person.png",
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                      boxShadow: [BoxShadow(blurRadius: 3, color: Colors.grey)],
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(50)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: true // || MY_IMAGE.trim().isEmpty
+                        ? CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Colors.grey[400],
+                            child: CachedNetworkImage(
+                              imageUrl: MY_IMAGE,
+                              height: 80,
+                              width: 80,
+                              placeholder: (context, url) => Image(
+                                  image: AssetImage("assets/images/person.png"),
+                                  height: 80,
+                                  width: 80,
+                                  fit: BoxFit.contain),
+                              errorWidget: (context, url, error) => Image(
+                                  image: AssetImage("assets/images/person.png"),
+                                  height: 80,
+                                  width: 80,
+                                  fit: BoxFit.contain),
+                            ),
+                          )
+                        : Image.file(image,
+                            height: 80, width: 80, fit: BoxFit.contain),
                   ),
-                  backgroundColor: Colors.grey[100],
                 ),
               ),
-              Text("Richard Fredrick",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold)),
+              InkWell(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) {
+                        return AlertDialog(
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              InkWell(
+                                onTap: () {
+                                  getImageGallery();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text("Choose Avatar from Gallery"),
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  getImageCamera();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text("Take image from Camera"),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      });
+                },
+                child: Text("Change Avatar",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.blueAccent,
+                    )),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Richard Fredrick",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold)),
+              ),
               Text("fichardfredrick@yahoo.com",
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -75,7 +166,7 @@ class _ProfileViewState extends State<ProfileView> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text("Update Bank Details",
                               style:
-                                  TextStyle(fontSize: 20, color: Colors.black)),
+                                  TextStyle(fontSize: 18, color: Colors.black)),
                         ),
                       )
                     ],
@@ -97,7 +188,7 @@ class _ProfileViewState extends State<ProfileView> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text("Rate our App",
                               style:
-                                  TextStyle(fontSize: 20, color: Colors.black)),
+                                  TextStyle(fontSize: 18, color: Colors.black)),
                         ),
                       )
                     ],
@@ -119,7 +210,7 @@ class _ProfileViewState extends State<ProfileView> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             "Help and Support",
-                            style: TextStyle(fontSize: 20, color: Colors.black),
+                            style: TextStyle(fontSize: 18, color: Colors.black),
                           ),
                         ),
                       )
@@ -262,7 +353,7 @@ class _ProfileViewState extends State<ProfileView> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text("Log Out",
                               style:
-                                  TextStyle(fontSize: 20, color: Colors.black)),
+                                  TextStyle(fontSize: 18, color: Colors.black)),
                         ),
                       )
                     ],

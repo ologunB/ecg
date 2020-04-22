@@ -27,11 +27,12 @@ class _LayoutTemplateState extends State<LayoutTemplate> {
   ];
 
   final PageStorageBucket bucket = PageStorageBucket();
+  int pageSelectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageStorage(
-        child: pages[widget.pageSelectedIndex],
+        child: pages[pageSelectedIndex],
         bucket: bucket,
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -39,10 +40,10 @@ class _LayoutTemplateState extends State<LayoutTemplate> {
           elevation: 15,
           onTap: (i) {
             setState(() {
-              widget.pageSelectedIndex = i;
+              pageSelectedIndex = i;
             });
           },
-          currentIndex: widget.pageSelectedIndex,
+          currentIndex: pageSelectedIndex,
           selectedItemColor: Styles.appPrimaryColor,
           unselectedItemColor: Colors.grey,
           showUnselectedLabels: true,
