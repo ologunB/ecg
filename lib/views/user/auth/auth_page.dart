@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/partials/custom_loading_button.dart';
 import 'package:ecgalpha/views/user/auth/register_complete_page.dart';
+import 'package:ecgalpha/views/user/profile/update_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -267,13 +269,13 @@ class _LoginWidgetState extends State<LoginWidget> {
           return;
         }
 
-        _dataRef
-            .child("User Collection")
-            .child(user.uid)
-            .once()
-            .then((snapshot) {
+        Firestore.instance
+            .collection("User Collection")
+            .document(user.uid)
+            .get()
+            .then((document) {
           //   var kEYS = snapshot.value.keys;
-          var dATA = snapshot.value;
+          var dATA = document.data;
 
           String type = dATA["Type"];
 
@@ -288,11 +290,23 @@ class _LoginWidgetState extends State<LoginWidget> {
               bName: dATA["Bank Name"],
               aName: dATA["Account Name"],
               aNum: dATA["Bank Number"]);
-          Navigator.of(context).pushReplacement(
-            CupertinoPageRoute(
-              builder: (context) => RegisterCompleteScreen(),
-            ),
-          );
+
+          if (dATA["Bank Name"].toString().trim().isEmpty) {
+            Navigator.of(context).pushReplacement(
+              CupertinoPageRoute(
+                builder: (context) => UpdateBankDetails(
+                  whereFrom: "login",
+                  uuid: user.uid,
+                ),
+              ),
+            );
+          } else {
+            Navigator.of(context).pushReplacement(
+              CupertinoPageRoute(
+                builder: (context) => RegisterCompleteScreen(),
+              ),
+            );
+          }
         }).catchError((ee) {
           setState(() {
             isLoading = false;
@@ -513,7 +527,6 @@ class _SignupWidgetState extends State<SignupWidget> {
   final _formKey = GlobalKey<FormState>();
   bool checkedValue = false;
   bool _autoValidate = false;
-
   bool isLoading = false;
 
   Future userSignUp(String fullName, String email, String password) async {
@@ -545,11 +558,22 @@ class _SignupWidgetState extends State<SignupWidget> {
               .set(mData)
               .then((b) {
             showToast("User created, Check email for verification!", context);
+            /*   setState(() {
+              isLoading = false;
+              isLogin = true;
+            });*/
+          });
+
+          Firestore.instance
+              .collection("User Collection")
+              .document(user.uid)
+              .setData(mData)
+              .then((val) {
+            showToast("User created, Check email for verification!", context);
             setState(() {
               isLoading = false;
               isLogin = true;
             });
-            //_tabController.animateTo(0);
           });
         });
       } else {

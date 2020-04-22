@@ -61,7 +61,8 @@ class _EachOrderItemState extends State<EachOrderItem> {
                   color: color,
                 ),
                 SizedBox(width: 10),
-                Text("₦${oCcy.format(double.parse(widget.investment.amount))}",
+                Text(
+                    "₦${commaFormat.format(double.parse(widget.investment.amount))}",
                     style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w800,

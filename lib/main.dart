@@ -35,7 +35,7 @@ class _MyWrapperState extends State<MyWrapper> {
     super.initState();
 
     isLoggedIn = _prefs.then((prefs) {
-      return (prefs.getBool('isLoggedIn'));
+      return (prefs.getBool('isLoggedIn') ?? false);
     });
   }
 

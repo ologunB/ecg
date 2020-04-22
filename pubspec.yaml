@@ -12,8 +12,9 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_auth_buttons:
   shared_preferences:
-  image_picker: #TODO configure for iOS later
+  image_picker: ^0.6.1+4 #TODO configure for iOS later
   firebase_database:
+  cloud_firestore:
   firebase_storage:
   intent: ^1.1.0
   firebase_core: ^0.4.0+9

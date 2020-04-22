@@ -15,7 +15,10 @@ class _OrderConfirmedDoneState extends State<OrderConfirmedDone> {
       Navigator.pushReplacement(
           context,
           CupertinoPageRoute(
-              builder: (context) => LayoutTemplate(pageSelectedIndex: 1),
+              builder: (context) => LayoutTemplate(
+                    pageSelectedIndex: 1,
+                    fromWhere: "investment",
+                  ),
               fullscreenDialog: true));
     });
     super.initState();
@@ -47,8 +50,8 @@ class _OrderConfirmedDoneState extends State<OrderConfirmedDone> {
                 Navigator.pushReplacement(
                     context,
                     CupertinoPageRoute(
-                        builder: (context) =>
-                            LayoutTemplate(pageSelectedIndex: 1),
+                        builder: (context) => LayoutTemplate(
+                            pageSelectedIndex: 1, fromWhere: "investment"),
                         fullscreenDialog: true));
               },
             )

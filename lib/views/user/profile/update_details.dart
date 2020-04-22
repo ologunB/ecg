@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/toast.dart';
 import 'package:ecgalpha/views/partials/custom_loading_button.dart';
+import 'package:ecgalpha/views/user/auth/register_complete_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,17 +12,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'change_password.dart';
 
 class UpdateBankDetails extends StatefulWidget {
+  final String whereFrom;
+  final String uuid;
+
+  const UpdateBankDetails({Key key, this.whereFrom, this.uuid})
+      : super(key: key);
   @override
   _PaymentMethodState createState() => _PaymentMethodState();
 }
 
 class _PaymentMethodState extends State<UpdateBankDetails> {
-  TextEditingController bankName =
-      TextEditingController(text: MY_BANK_NAME.trim());
-  TextEditingController bankNumber =
-      TextEditingController(text: MY_ACCOUNT_NUMBER.trim());
-  TextEditingController accName =
-      TextEditingController(text: MY_BANK_ACCOUNT_NAME.trim());
+  TextEditingController bankName;
+  TextEditingController bankNumber;
+  TextEditingController accName;
 
   bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
@@ -28,10 +32,23 @@ class _PaymentMethodState extends State<UpdateBankDetails> {
   bool _autoValidate = false;
 
   @override
+  void initState() {
+    if (widget.whereFrom == "profile") {
+      bankName = TextEditingController(text: MY_BANK_NAME);
+      bankNumber = TextEditingController(text: MY_ACCOUNT_NUMBER);
+      accName = TextEditingController(text: MY_BANK_ACCOUNT_NAME);
+    } else {
+      bankName = TextEditingController();
+      bankNumber = TextEditingController();
+      accName = TextEditingController();
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
@@ -194,23 +211,38 @@ class _PaymentMethodState extends State<UpdateBankDetails> {
 
                       final SharedPreferences prefs = await _prefs;
 
-                      await rootRef
-                          .child("User Collection")
-                          .child(MY_UID)
-                          .update(m)
-                          .whenComplete(() => () {
-                                setState(() {
-                                  isLoading = false;
+                      String uu =
+                          widget.whereFrom == "login" ? widget.uuid : MY_UID;
 
-                                  prefs.setString("Bank Name", bankName.text);
-                                  prefs.setString(
-                                      "Account Number", bankNumber.text);
-                                  prefs.setString("Account Name", accName.text);
-                                });
-                                Toast.show("Updated!", context,
-                                    duration: Toast.LENGTH_LONG,
-                                    gravity: Toast.CENTER);
-                              });
+                      Firestore.instance
+                          .collection("User Collection")
+                          .document(uu)
+                          .updateData(m);
+
+                      rootRef.child("User Collection").child(uu).update(m);
+
+                      Future.delayed(Duration(milliseconds: 3000)).then((c) {
+                        showToast("done", context);
+                        setState(() {
+                          isLoading = false;
+
+                          prefs.setString("Bank Name", bankName.text);
+                          prefs.setString("Account Number", bankNumber.text);
+                          prefs.setString("Account Name", accName.text);
+                          MY_BANK_ACCOUNT_NAME = accName.text;
+                          MY_ACCOUNT_NUMBER = bankNumber.text;
+                          MY_BANK_NAME = bankName.text;
+                        });
+                        Toast.show("Updated!", context,
+                            duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
+                        if (widget.whereFrom == "login") {
+                          Navigator.of(context).pushReplacement(
+                            CupertinoPageRoute(
+                              builder: (context) => RegisterCompleteScreen(),
+                            ),
+                          );
+                        }
+                      });
                     }
                   },
             icon: isLoading

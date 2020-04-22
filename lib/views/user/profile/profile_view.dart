@@ -1,17 +1,22 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/utils/toast.dart';
 import 'package:ecgalpha/views/user/auth/auth_page.dart';
 import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:ecgalpha/views/user/profile/change_password.dart';
 import 'package:ecgalpha/views/user/profile/update_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'help_page.dart';
 
 class ProfileView extends StatefulWidget {
   ProfileView({Key key}) : super(key: key);
@@ -28,6 +33,31 @@ class _ProfileViewState extends State<ProfileView> {
     setState(() {
       image = img;
     });
+    processImage(img);
+  }
+
+  void processImage(File file) async {
+    if (file != null) {
+      String url = await uploadImage(file);
+
+      Firestore.instance
+          .collection("User Collection")
+          .document(MY_UID)
+          .updateData({"Avatar": url});
+
+      FirebaseDatabase.instance
+          .reference()
+          .child("User Collection")
+          .child(MY_UID)
+          .update({"Avatar": url});
+
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString("image", url);
+      MY_IMAGE = url;
+
+      Toast.show("Image Uploaded", context,
+          gravity: Toast.BOTTOM, duration: Toast.LENGTH_LONG);
+    }
   }
 
   Future getImageCamera() async {
@@ -36,6 +66,7 @@ class _ProfileViewState extends State<ProfileView> {
     setState(() {
       image = img;
     });
+    processImage(img);
   }
 
   @override
@@ -60,28 +91,38 @@ class _ProfileViewState extends State<ProfileView> {
                       borderRadius: BorderRadius.circular(50)),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: true // || MY_IMAGE.trim().isEmpty
-                        ? CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.grey[400],
+                    child: image == null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(40.0),
                             child: CachedNetworkImage(
-                              imageUrl: MY_IMAGE,
+                              imageUrl: MY_IMAGE.isEmpty ? "r" : MY_IMAGE,
                               height: 80,
                               width: 80,
-                              placeholder: (context, url) => Image(
-                                  image: AssetImage("assets/images/person.png"),
-                                  height: 80,
-                                  width: 80,
-                                  fit: BoxFit.contain),
-                              errorWidget: (context, url, error) => Image(
-                                  image: AssetImage("assets/images/person.png"),
-                                  height: 80,
-                                  width: 80,
-                                  fit: BoxFit.contain),
+                              placeholder: (context, url) => ClipRRect(
+                                borderRadius: BorderRadius.circular(40.0),
+                                child: Image(
+                                    image:
+                                        AssetImage("assets/images/person.png"),
+                                    height: 80,
+                                    width: 80,
+                                    fit: BoxFit.contain),
+                              ),
+                              errorWidget: (context, url, error) => ClipRRect(
+                                borderRadius: BorderRadius.circular(40.0),
+                                child: Image(
+                                    image:
+                                        AssetImage("assets/images/person.png"),
+                                    height: 80,
+                                    width: 80,
+                                    fit: BoxFit.contain),
+                              ),
                             ),
                           )
-                        : Image.file(image,
-                            height: 80, width: 80, fit: BoxFit.contain),
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(40.0),
+                            child: Image.file(image,
+                                height: 80, width: 80, fit: BoxFit.contain),
+                          ),
                   ),
                 ),
               ),
@@ -98,6 +139,7 @@ class _ProfileViewState extends State<ProfileView> {
                               InkWell(
                                 onTap: () {
                                   getImageGallery();
+                                  Navigator.pop(context);
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -107,6 +149,7 @@ class _ProfileViewState extends State<ProfileView> {
                               InkWell(
                                 onTap: () {
                                   getImageCamera();
+                                  Navigator.pop(context);
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -127,14 +170,14 @@ class _ProfileViewState extends State<ProfileView> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Richard Fredrick",
+                child: Text(MY_NAME,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 20,
                         color: Colors.black,
                         fontWeight: FontWeight.bold)),
               ),
-              Text("fichardfredrick@yahoo.com",
+              Text(MY_EMAIL,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18,
@@ -149,7 +192,8 @@ class _ProfileViewState extends State<ProfileView> {
                   Navigator.push(
                     context,
                     CupertinoPageRoute(
-                      builder: (context) => UpdateBankDetails(),
+                      builder: (context) =>
+                          UpdateBankDetails(whereFrom: "profile"),
                     ),
                   );
                 },
@@ -196,7 +240,14 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) => HelpPage(),
+                    ),
+                  );
+                },
                 child: Container(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(

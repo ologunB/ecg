@@ -3,8 +3,7 @@ import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'cancelled/cancelled_order.dart';
-import 'ongoing/ongoing_order.dart';
+import 'custom_order_page.dart';
 
 class OrdersView extends StatefulWidget {
   OrdersView({Key key}) : super(key: key);
@@ -72,8 +71,11 @@ class _OrdersViewState extends State<OrdersView>
         body: Container(
           height: double.infinity,
           width: double.infinity,
-          child: TabBarView(
-              children: [OngoingOrders(), OngoingOrders(), CancelledOrders()]),
+          child: TabBarView(children: [
+            CustomOrderPage(type: "Pending", color: Styles.appPrimaryColor),
+            CustomOrderPage(type: "Confirmed", color: Colors.lightGreen),
+            CustomOrderPage(type: "Cancelled", color: Colors.red)
+          ]),
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Styles.appPrimaryColor,

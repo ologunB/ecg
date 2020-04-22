@@ -65,7 +65,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: Text(
-                        widget.investment.id.substring(1, 10),
+                        widget.investment.id.substring(0, 10),
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -77,7 +77,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       color: widget.color,
                     ),
                     SizedBox(width: 10),
-                    Text("₦${oCcy.format(amount)}",
+                    Text("₦${commaFormat.format(amount)}",
                         style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w600,
@@ -157,7 +157,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       ),
                     ),
                     Text(
-                      "₦${oCcy.format(amount)}",
+                      "₦${commaFormat.format(amount)}",
                       textAlign: TextAlign.right,
                       style: TextStyle(
                           fontSize: 20,
@@ -186,8 +186,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                       ),
                       Text(
                         amount < 800000
-                            ? "₦${oCcy.format((amount * 0.4).round())}"
-                            : "₦${oCcy.format((amount * 0.3).round())}",
+                            ? "₦${commaFormat.format((amount * 0.4).round())}"
+                            : "₦${commaFormat.format((amount * 0.3).round())}",
                         textAlign: TextAlign.right,
                         style: TextStyle(
                             fontSize: 20,
@@ -238,8 +238,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                       ),
                       Text(
                         amount < 800000
-                            ? "₦${oCcy.format((amount * 1.4).round())}"
-                            : "₦${oCcy.format((amount * 1.3).round())}",
+                            ? "₦${commaFormat.format((amount * 1.4).round())}"
+                            : "₦${commaFormat.format((amount * 1.3).round())}",
                         textAlign: TextAlign.right,
                         style: TextStyle(
                             fontSize: 20,

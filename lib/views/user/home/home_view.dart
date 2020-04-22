@@ -80,22 +80,33 @@ class _HomeViewState extends State<HomeView> {
                             builder: (context, snap) {
                               if (snap.connectionState ==
                                   ConnectionState.done) {
-                                return CachedNetworkImage(
-                                  imageUrl: MY_IMAGE.isEmpty ? "ma" : MY_IMAGE,
-                                  height: 50,
-                                  width: 50,
-                                  placeholder: (context, url) => Image(
-                                      image: AssetImage(
-                                          "assets/images/person.png"),
-                                      height: 50,
-                                      width: 50,
-                                      fit: BoxFit.contain),
-                                  errorWidget: (context, url, error) => Image(
-                                      image: AssetImage(
-                                          "assets/images/person.png"),
-                                      height: 50,
-                                      width: 50,
-                                      fit: BoxFit.contain),
+                                return ClipRRect(
+                                  borderRadius: BorderRadius.circular(40.0),
+                                  child: CachedNetworkImage(
+                                    imageUrl:
+                                        MY_IMAGE.isEmpty ? "ma" : MY_IMAGE,
+                                    height: 50,
+                                    width: 50,
+                                    placeholder: (context, url) => ClipRRect(
+                                      borderRadius: BorderRadius.circular(40.0),
+                                      child: Image(
+                                          image: AssetImage(
+                                              "assets/images/person.png"),
+                                          height: 50,
+                                          width: 50,
+                                          fit: BoxFit.contain),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        ClipRRect(
+                                      borderRadius: BorderRadius.circular(40.0),
+                                      child: Image(
+                                          image: AssetImage(
+                                              "assets/images/person.png"),
+                                          height: 50,
+                                          width: 50,
+                                          fit: BoxFit.contain),
+                                    ),
+                                  ),
                                 );
                               }
                               return CircleAvatar(

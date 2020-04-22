@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 
 class LayoutTemplate extends StatefulWidget {
   int pageSelectedIndex = 0;
-  LayoutTemplate({this.pageSelectedIndex});
+  String fromWhere = "rfe";
+  LayoutTemplate({this.pageSelectedIndex, this.fromWhere});
   @override
   _LayoutTemplateState createState() => _LayoutTemplateState();
 }
@@ -28,11 +29,12 @@ class _LayoutTemplateState extends State<LayoutTemplate> {
 
   final PageStorageBucket bucket = PageStorageBucket();
   int pageSelectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageStorage(
-        child: pages[pageSelectedIndex],
+        child: pages[widget.fromWhere == "investment" ? 1 : pageSelectedIndex],
         bucket: bucket,
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -40,10 +42,12 @@ class _LayoutTemplateState extends State<LayoutTemplate> {
           elevation: 15,
           onTap: (i) {
             setState(() {
+              widget.fromWhere = "er";
               pageSelectedIndex = i;
             });
           },
-          currentIndex: pageSelectedIndex,
+          currentIndex:
+              widget.fromWhere == "investment" ? 1 : pageSelectedIndex,
           selectedItemColor: Styles.appPrimaryColor,
           unselectedItemColor: Colors.grey,
           showUnselectedLabels: true,

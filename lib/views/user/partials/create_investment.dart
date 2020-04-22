@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/user/orders/confirmed/order_confirmed_done.dart';
@@ -353,6 +354,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
     String t = selectedAccount.name + "  " + selectedAccount.bank;
     mData.putIfAbsent("Account Paid", () => t);
     mData.putIfAbsent("Uid", () => MY_UID);
+    mData.putIfAbsent("Timestamp", () => DateTime.now().millisecondsSinceEpoch);
 
     if (pop != null) {
       _setState(() {
@@ -364,16 +366,16 @@ class _PaymentMethodState extends State<CreateInvestment> {
       String url = (await downloadUrl.ref.getDownloadURL());
       mData.putIfAbsent("POP", () => url);
 
-      rootRef
-          .child("Transactions")
-          .child("Pending")
-          .child(MY_UID)
-          .push()
-          .set(mData)
-          .then((val) {
+      CollectionReference ref = Firestore.instance
+          .collection("Transactions")
+          .document("Pending")
+          .collection(MY_UID);
+
+      ref.add(mData).then((val) {
         _setState(() {
           isLoading = true;
         });
+        ref.document(val.documentID).updateData({"id": val.documentID});
         Navigator.pushReplacement(
             context,
             CupertinoPageRoute(
