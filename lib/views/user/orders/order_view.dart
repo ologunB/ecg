@@ -1,8 +1,9 @@
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/views/user/partials/create_investment.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'cancelled/cancelled_order.dart';
-import 'confirmed/confirmed_order.dart';
 import 'ongoing/ongoing_order.dart';
 
 class OrdersView extends StatefulWidget {
@@ -71,11 +72,16 @@ class _OrdersViewState extends State<OrdersView>
         body: Container(
           height: double.infinity,
           width: double.infinity,
-          child: TabBarView(children: [
-            OngoingOrders(),
-            ConfirmedOrders(),
-            CancelledOrders()
-          ]),
+          child: TabBarView(
+              children: [OngoingOrders(), OngoingOrders(), CancelledOrders()]),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Styles.appPrimaryColor,
+          onPressed: () {
+            Navigator.push(context,
+                CupertinoPageRoute(builder: (context) => CreateInvestment()));
+          },
+          child: Icon(Icons.add, size: 30),
         ),
       ),
     );

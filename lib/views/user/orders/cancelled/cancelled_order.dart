@@ -8,7 +8,10 @@ class CancelledOrders extends StatefulWidget {
   _CancelledOrdersState createState() => _CancelledOrdersState();
 }
 
-class _CancelledOrdersState extends State<CancelledOrders> {
+class _CancelledOrdersState extends State<CancelledOrders>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -1,7 +1,6 @@
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/user/home/home_view.dart';
 import 'package:ecgalpha/views/user/orders/order_view.dart';
-import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:ecgalpha/views/user/profile/profile_view.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
@@ -65,14 +64,6 @@ class _LayoutTemplateState extends State<LayoutTemplate> {
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.w500))),
           ]),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Styles.appPrimaryColor,
-        onPressed: () {
-          Navigator.push(context,
-              CupertinoPageRoute(builder: (context) => CreateInvestment()));
-        },
-        child: Icon(Icons.add, size: 30),
-      ),
     );
   }
 }

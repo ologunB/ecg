@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../partials/each_order_item.dart';
 import 'order_details.dart';
 
 class ConfirmedOrders extends StatefulWidget {
@@ -22,7 +21,7 @@ class _ConfirmedOrdersState extends State<ConfirmedOrders> {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => OrderDetails()));
               },
-              child: EachOrderItem(),
+              child: Text("erfef"),
             );
           },
           shrinkWrap: true,

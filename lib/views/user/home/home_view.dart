@@ -1,6 +1,7 @@
 import 'package:ecgalpha/utils/carousel_slider.dart';
 import 'package:ecgalpha/utils/constants.dart';
-import 'package:ecgalpha/views/partials/each_order_item.dart';
+import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,219 +57,230 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-          child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Row(
-                    children: <Widget>[
-                      CircleAvatar(
-                        radius: 25,
-                        backgroundColor: Colors.white,
-                        backgroundImage: AssetImage(
-                          "assets/images/person.png",
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+            child: Container(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Row(
+                      children: <Widget>[
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundColor: Colors.white,
+                          backgroundImage: AssetImage(
+                            "assets/images/person.png",
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      FutureBuilder(
-                          future: name,
-                          builder: (context, snap) {
-                            if (snap.connectionState == ConnectionState.done) {
+                        SizedBox(width: 10),
+                        FutureBuilder(
+                            future: name,
+                            builder: (context, snap) {
+                              if (snap.connectionState ==
+                                  ConnectionState.done) {
+                                return Text(
+                                  "Hi, ${snap.data}",
+                                  style: TextStyle(
+                                      fontSize: 22,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
+                                );
+                              }
                               return Text(
-                                "Hi, ${snap.data}",
+                                "Hi,  ",
                                 style: TextStyle(
                                     fontSize: 22,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w600),
                               );
-                            }
-                            return Text(
-                              "Hi,  ",
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600),
-                            );
-                          }),
-                    ],
+                            }),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                      icon: Icon(Icons.notifications),
-                      onPressed: () async {
-                        Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) => NotificationPage()));
-                      }),
-                )
-              ],
-            ),
-            CarouselSlider(
-              height: MediaQuery.of(context).size.height / 4,
-              autoPlay: true,
-              enableInfiniteScroll: true,
-              enlargeCenterPage: true,
-              pauseAutoPlayOnTouch: Duration(seconds: 5),
-              items: [
-                "assets/images/placeholder.png",
-                "assets/images/placeholder.png",
-                "assets/images/placeholder.png",
-                "assets/images/placeholder.png",
-                "assets/images/placeholder.png",
-              ].map((i) {
-                return Builder(
-                  builder: (context) {
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.symmetric(horizontal: 5.0),
-                      decoration: BoxDecoration(
-                        color: Colors.black38,
-                        backgroundBlendMode: BlendMode.dstOut,
-                        borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                        image: DecorationImage(
-                          image: AssetImage(""),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      child: Stack(
-                        children: <Widget>[
-                          Align(
-                            child: Image(
-                              image: AssetImage(i),
-                              fit: BoxFit.fill,
-                              color: Colors.black38,
-                              colorBlendMode: BlendMode.dstOut,
-                            ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                        icon: Icon(Icons.notifications),
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) => NotificationPage()));
+                        }),
+                  )
+                ],
+              ),
+              CarouselSlider(
+                height: MediaQuery.of(context).size.height / 4,
+                autoPlay: true,
+                enableInfiniteScroll: true,
+                enlargeCenterPage: true,
+                pauseAutoPlayOnTouch: Duration(seconds: 5),
+                items: [
+                  "assets/images/placeholder.png",
+                  "assets/images/placeholder.png",
+                  "assets/images/placeholder.png",
+                  "assets/images/placeholder.png",
+                  "assets/images/placeholder.png",
+                ].map((i) {
+                  return Builder(
+                    builder: (context) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.symmetric(horizontal: 5.0),
+                        decoration: BoxDecoration(
+                          color: Colors.black38,
+                          backgroundBlendMode: BlendMode.dstOut,
+                          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                          image: DecorationImage(
+                            image: AssetImage(""),
+                            fit: BoxFit.fill,
                           ),
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Text(
-                              "Advertise on this space",
-                              style: TextStyle(
-                                  backgroundColor: Colors.blueAccent,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white),
+                        ),
+                        child: Stack(
+                          children: <Widget>[
+                            Align(
+                              child: Image(
+                                image: AssetImage(i),
+                                fit: BoxFit.fill,
+                                color: Colors.black38,
+                                colorBlendMode: BlendMode.dstOut,
+                              ),
                             ),
-                          )
-                        ],
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Text(
+                                "Advertise on this space",
+                                style: TextStyle(
+                                    backgroundColor: Colors.blueAccent,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white),
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0, top: 8),
+                child: Text(
+                  "Transactions Details",
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              Container(
+                height: 150,
+                width: 10000,
+                padding: EdgeInsets.all(5),
+                child: ListView.builder(
+                  itemCount: types.length,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, i) {
+                    return Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.greenAccent[100],
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(25),
+                            bottomRight: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(25),
+                          ),
+                        ),
+                        child: FlatButton(
+                          onPressed: () {},
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                types[i],
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.black),
+                              ),
+                              SizedBox(height: 15),
+                              Text(
+                                "₦2000",
+                                style: TextStyle(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.green),
+                              ),
+                              SizedBox(height: 7),
+                              Padding(
+                                padding: EdgeInsets.only(top: 8.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.lightGreen,
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(15),
+                                      bottomRight: Radius.circular(5),
+                                      topLeft: Radius.circular(5),
+                                      topRight: Radius.circular(15),
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.all(5),
+                                  child: Text(
+                                    "4 days",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     );
                   },
-                );
-              }).toList(),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0, top: 8),
-              child: Text(
-                "Transactions Details",
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600),
+                ),
               ),
-            ),
-            Container(
-              height: 150,
-              width: 10000,
-              padding: EdgeInsets.all(5),
-              child: ListView.builder(
-                itemCount: types.length,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0, top: 8),
+                child: Text(
+                  "Recent Transactions",
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              ListView.builder(
+                itemCount: 2,
                 shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, i) {
-                  return Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.greenAccent[100],
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(25),
-                          bottomRight: Radius.circular(10),
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(25),
-                        ),
-                      ),
-                      child: FlatButton(
-                        onPressed: () {},
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              types[i],
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w300,
-                                  color: Colors.black),
-                            ),
-                            SizedBox(height: 15),
-                            Text(
-                              "₦2000",
-                              style: TextStyle(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.green),
-                            ),
-                            SizedBox(height: 7),
-                            Padding(
-                              padding: EdgeInsets.only(top: 8.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.lightGreen,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(15),
-                                    bottomRight: Radius.circular(5),
-                                    topLeft: Radius.circular(5),
-                                    topRight: Radius.circular(15),
-                                  ),
-                                ),
-                                padding: EdgeInsets.all(5),
-                                child: Text(
-                                  "4 days",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+                itemBuilder: (context, position) {
+                  return Text("ghv m");
                 },
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0, top: 8),
-              child: Text(
-                "Recent Transactions",
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
-            ListView.builder(
-              itemCount: 2,
-              shrinkWrap: true,
-              itemBuilder: (context, position) {
-                return EachOrderItem();
-              },
-            ),
-          ],
-        ),
-      )),
+            ],
+          ),
+        )),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Styles.appPrimaryColor,
+        onPressed: () {
+          Navigator.push(context,
+              CupertinoPageRoute(builder: (context) => CreateInvestment()));
+        },
+        child: Icon(Icons.add, size: 30),
+      ),
     );
   }
 }

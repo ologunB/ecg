@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../partials/each_order_item.dart';
 import 'order_details.dart';
 
 class ConfirmedOrders extends StatefulWidget {
@@ -9,7 +8,10 @@ class ConfirmedOrders extends StatefulWidget {
   _ConfirmedOrdersState createState() => _ConfirmedOrdersState();
 }
 
-class _ConfirmedOrdersState extends State<ConfirmedOrders> {
+class _ConfirmedOrdersState extends State<ConfirmedOrders>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,7 +22,7 @@ class _ConfirmedOrdersState extends State<ConfirmedOrders> {
               Navigator.push(context,
                   CupertinoPageRoute(builder: (context) => OrderDetails()));
             },
-            child: EachOrderItem(),
+            child: Text("ere"),
           );
         },
         shrinkWrap: true,
