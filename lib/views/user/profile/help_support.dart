@@ -197,6 +197,7 @@ class _HelpAndSupportState extends State<HelpAndSupport> {
                             return AlertDialog(
                               content: Text(
                                 "Tickets will be attended to by support as soon as possible. Thanks for using ECG",
+                                textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: 18),
                               ),
                               actions: <Widget>[

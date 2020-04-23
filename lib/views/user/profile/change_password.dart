@@ -29,24 +29,45 @@ class _PaymentMethodState extends State<ChangePasswordPage> {
   bool checkedValue = false;
   bool _autoValidate = false;
 
-  Future _changePassword(String password) async {
+  Future _changePassword(String former, String password) async {
     setState(() {
       isLoading = true;
     });
 
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-    user.updatePassword(password).then((_) {
-      showToast("Succesfully changed password", context);
-      oldPass.clear();
-      new1Pass.clear();
-      new2Pass.clear();
-      setState(() {
-        isLoading = false;
+    await _firebaseAuth
+        .signInWithEmailAndPassword(email: MY_EMAIL, password: former)
+        .then((user) {
+      user.user.updatePassword(password).then((_) {
+        showDialog(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                content: Text(
+                  "Password successfully changed. Don't forget your password!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+              );
+            });
+        oldPass.clear();
+        new1Pass.clear();
+        new2Pass.clear();
+        setState(() {
+          isLoading = false;
+          _autoValidate = false;
+        });
+        return true;
+      }).catchError((error) {
+        showToast("Password can't be changed" + error.toString(), context);
+        setState(() {
+          isLoading = false;
+        });
+        return true;
       });
-      return true;
-    }).catchError((error) {
-      showToast("Password can't be changed" + error.toString(), context);
+    }).catchError((e) {
+      showToast("Password can't be changed" + e.toString(), context);
       setState(() {
         isLoading = false;
       });
@@ -189,7 +210,7 @@ class _PaymentMethodState extends State<ChangePasswordPage> {
                     });
 
                     if (_formKey.currentState.validate()) {
-                      _changePassword(new2Pass.text);
+                      _changePassword(oldPass.text, new2Pass.text);
                     }
                   },
             icon: isLoading

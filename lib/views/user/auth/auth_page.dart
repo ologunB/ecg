@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/views/admin/auth/admin_auth_page.dart';
 import 'package:ecgalpha/views/partials/custom_loading_button.dart';
 import 'package:ecgalpha/views/user/auth/register_complete_page.dart';
 import 'package:ecgalpha/views/user/profile/update_details.dart';
@@ -50,183 +51,197 @@ class _AuthPageState extends State<AuthPage>
 
   Widget presentWidget = LoginWidget();
 
+  int adminLock = 0;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Styles.appPrimaryColor,
-                      Colors.blue,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(40),
-                    bottomRight: Radius.circular(40),
-                  ),
-                ),
-                //   color: Styles.appPrimaryColor,
-                height: size.height / 2.5,
-              ),
-              Expanded(
-                child: Container(),
-              ),
-              Container(
-                padding: const EdgeInsets.only(bottom: 50),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    GoogleSignInButton(
-                      onPressed: () {},
-                      text: "SIGN IN WITH GOOGLE",
-                      darkMode: true,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-          Container(
-              height: size.height,
-              padding: EdgeInsets.all(30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(height: 40),
-                  Text(
-                    isLogin ? text1 : text3,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 35,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    isLogin ? text2 : text4,
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  Expanded(
-                    child: ListView(
-                      children: <Widget>[
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(color: Colors.grey[200], blurRadius: 5)
-                            ],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 10),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  InkWell(
-                                    onTap: () {
-                                      if (presentWidget != LoginWidget()) {
-                                        setState(() {
-                                          presentWidget = LoginWidget();
-                                          isLogin = true;
-                                        });
-                                      }
-                                    },
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(
-                                          "Login",
-                                          style: TextStyle(
-                                              color: isLogin
-                                                  ? Styles.appPrimaryColor
-                                                  : Colors.grey,
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Container(
-                                          width: 80,
-                                          height: 5,
-                                          decoration: BoxDecoration(
-                                              color: isLogin
-                                                  ? Styles.appPrimaryColor
-                                                  : Colors.white,
-                                              borderRadius: BorderRadius.only(
-                                                  topRight: Radius.circular(10),
-                                                  topLeft:
-                                                      Radius.circular(10))),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(width: 30),
-                                  InkWell(
-                                    onTap: () {
-                                      if (presentWidget != SignupWidget()) {
-                                        setState(() {
-                                          presentWidget = SignupWidget();
-                                          isLogin = false;
-                                        });
-                                      }
-                                    },
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(
-                                          "Signup",
-                                          style: TextStyle(
-                                              color: isLogin
-                                                  ? Colors.grey
-                                                  : Styles.appPrimaryColor,
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Container(
-                                          width: 80,
-                                          height: 5,
-                                          decoration: BoxDecoration(
-                                              color: !isLogin
-                                                  ? Styles.appPrimaryColor
-                                                  : Colors.white,
-                                              borderRadius: BorderRadius.only(
-                                                  topRight: Radius.circular(10),
-                                                  topLeft:
-                                                      Radius.circular(10))),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Divider(),
-                              isLogin ? SizedBox(height: 70) : Container(),
-                              presentWidget,
-                            ],
-                          ),
-                        )
+      body: InkWell(
+        onTap: () {
+          if (adminLock > 5) {
+            Navigator.pushReplacement(context,
+                CupertinoPageRoute(builder: (context) => AdminAuthPage()));
+          } else {
+            adminLock++;
+          }
+        },
+        child: Stack(
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Styles.appPrimaryColor,
+                        Colors.blue,
                       ],
                     ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(40),
+                      bottomRight: Radius.circular(40),
+                    ),
                   ),
-                ],
-              ))
-        ],
+                  //   color: Styles.appPrimaryColor,
+                  height: size.height / 2.5,
+                ),
+                Expanded(
+                  child: Container(),
+                ),
+                Container(
+                  padding: const EdgeInsets.only(bottom: 50),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      GoogleSignInButton(
+                        onPressed: () {},
+                        text: "SIGN IN WITH GOOGLE",
+                        darkMode: true,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Container(
+                height: size.height,
+                padding: EdgeInsets.all(30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 40),
+                    Text(
+                      isLogin ? text1 : text3,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 35,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      isLogin ? text2 : text4,
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        children: <Widget>[
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.grey[200], blurRadius: 5)
+                              ],
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 10),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    InkWell(
+                                      onTap: () {
+                                        if (presentWidget != LoginWidget()) {
+                                          setState(() {
+                                            presentWidget = LoginWidget();
+                                            isLogin = true;
+                                          });
+                                        }
+                                      },
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text(
+                                            "Login",
+                                            style: TextStyle(
+                                                color: isLogin
+                                                    ? Styles.appPrimaryColor
+                                                    : Colors.grey,
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          SizedBox(height: 10),
+                                          Container(
+                                            width: 80,
+                                            height: 5,
+                                            decoration: BoxDecoration(
+                                                color: isLogin
+                                                    ? Styles.appPrimaryColor
+                                                    : Colors.white,
+                                                borderRadius: BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(10),
+                                                    topLeft:
+                                                        Radius.circular(10))),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: 30),
+                                    InkWell(
+                                      onTap: () {
+                                        if (presentWidget != SignupWidget()) {
+                                          setState(() {
+                                            presentWidget = SignupWidget();
+                                            isLogin = false;
+                                          });
+                                        }
+                                      },
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text(
+                                            "Signup",
+                                            style: TextStyle(
+                                                color: isLogin
+                                                    ? Colors.grey
+                                                    : Styles.appPrimaryColor,
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          SizedBox(height: 10),
+                                          Container(
+                                            width: 80,
+                                            height: 5,
+                                            decoration: BoxDecoration(
+                                                color: !isLogin
+                                                    ? Styles.appPrimaryColor
+                                                    : Colors.white,
+                                                borderRadius: BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(10),
+                                                    topLeft:
+                                                        Radius.circular(10))),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Divider(),
+                                isLogin ? SizedBox(height: 70) : Container(),
+                                presentWidget,
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ))
+          ],
+        ),
       ),
     );
   }
@@ -585,11 +600,27 @@ class _SignupWidgetState extends State<SignupWidget> {
               .document(user.uid)
               .setData(mData)
               .then((val) {
-            showToast("User created, Check email for verification!", context);
+            showDialog(
+                context: context,
+                builder: (_) {
+                  return AlertDialog(
+                    content: Text(
+                      "User created, Check email for verification. Thanks for using ECG",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  );
+                });
+            upEmail.clear();
+            upPassword.clear();
+            upFName.clear();
+            // showToast("User created, Check email for verification!", context);
             setState(() {
+              _autoValidate = false;
               isLoading = false;
               isLogin = true;
             });
+            FocusScope.of(context).unfocus();
           });
         });
       } else {

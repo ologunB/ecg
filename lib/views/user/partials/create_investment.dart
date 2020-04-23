@@ -176,6 +176,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
                             setState(() {
                               selectedAccount = value;
                             });
+                            FocusScope.of(context).unfocus();
                           },
                         ),
                         Divider(),
@@ -371,6 +372,16 @@ class _PaymentMethodState extends State<CreateInvestment> {
       String url = (await downloadUrl.ref.getDownloadURL());
       mData.putIfAbsent("POP", () => url);
 */
+
+      Firestore.instance
+          .collection("Admin")
+          .document(thePresentTime())
+          .collection("Transactions")
+          .document("Confirmed")
+          .collection(MY_UID)
+          .document(rnd)
+          .setData(mData);
+
       Firestore.instance
           .collection("Transactions")
           .document("Confirmed")

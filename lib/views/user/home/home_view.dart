@@ -8,7 +8,6 @@ import 'package:ecgalpha/views/partials/each_order_item.dart';
 import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'notification_page.dart';
 
@@ -82,49 +81,6 @@ Widget middleItem(String type, String amount, String time) => Padding(
     );
 
 class _HomeViewState extends State<HomeView> {
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
-  Future<String> uid, email, name, type, bName, aName, bNum, image;
-
-  @override
-  void initState() {
-    super.initState();
-
-    uid = _prefs.then((prefs) {
-      return (prefs.getString('uid') ?? "customerUID");
-    });
-    email = _prefs.then((prefs) {
-      return (prefs.getString('email') ?? "customerEmail");
-    });
-    name = _prefs.then((prefs) {
-      return (prefs.getString('name') ?? "customerName");
-    });
-    bName = _prefs.then((prefs) {
-      return (prefs.getString('Bank Name') ?? "bankName");
-    });
-    aName = _prefs.then((prefs) {
-      return (prefs.getString('Account Name') ?? "accName");
-    });
-    bNum = _prefs.then((prefs) {
-      return (prefs.getString('Account Number') ?? "accNum");
-    });
-    image = _prefs.then((prefs) {
-      return (prefs.getString('image') ?? "image");
-    });
-
-    doAssign();
-  }
-
-  void doAssign() async {
-    MY_NAME = await name;
-    MY_UID = await uid;
-    MY_EMAIL = await email;
-    MY_ACCOUNT_NUMBER = await bNum;
-    MY_BANK_ACCOUNT_NAME = await aName;
-    MY_BANK_NAME = await bName;
-    MY_IMAGE = await image;
-  }
-
   int totalExpecting = 0;
   String expectingTime;
   int todayPending = 0;
@@ -151,72 +107,40 @@ class _HomeViewState extends State<HomeView> {
                   Expanded(
                     child: Row(
                       children: <Widget>[
-                        FutureBuilder(
-                            future: image,
-                            builder: (context, snap) {
-                              if (snap.connectionState ==
-                                  ConnectionState.done) {
-                                return ClipRRect(
-                                  borderRadius: BorderRadius.circular(40.0),
-                                  child: CachedNetworkImage(
-                                    imageUrl:
-                                        MY_IMAGE.isEmpty ? "ma" : MY_IMAGE,
-                                    height: 50,
-                                    width: 50,
-                                    placeholder: (context, url) => ClipRRect(
-                                      borderRadius: BorderRadius.circular(40.0),
-                                      child: Image(
-                                          image: AssetImage(
-                                              "assets/images/person.png"),
-                                          height: 50,
-                                          width: 50,
-                                          fit: BoxFit.contain),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        ClipRRect(
-                                      borderRadius: BorderRadius.circular(40.0),
-                                      child: Image(
-                                          image: AssetImage(
-                                              "assets/images/person.png"),
-                                          height: 50,
-                                          width: 50,
-                                          fit: BoxFit.contain),
-                                    ),
-                                  ),
-                                );
-                              }
-                              return CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.white,
-                                backgroundImage: AssetImage(
-                                  "assets/images/person.png",
-                                ),
-                              );
-                            }),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(40.0),
+                          child: CachedNetworkImage(
+                            imageUrl: MY_IMAGE.isEmpty ? "ma" : MY_IMAGE,
+                            height: 50,
+                            width: 50,
+                            placeholder: (context, url) => ClipRRect(
+                              borderRadius: BorderRadius.circular(40.0),
+                              child: Image(
+                                  image: AssetImage("assets/images/person.png"),
+                                  height: 50,
+                                  width: 50,
+                                  fit: BoxFit.contain),
+                            ),
+                            errorWidget: (context, url, error) => ClipRRect(
+                              borderRadius: BorderRadius.circular(40.0),
+                              child: Image(
+                                  image: AssetImage("assets/images/person.png"),
+                                  height: 50,
+                                  width: 50,
+                                  fit: BoxFit.contain),
+                            ),
+                          ),
+                        ),
                         SizedBox(width: 10),
                         Flexible(
-                          child: FutureBuilder(
-                              future: name,
-                              builder: (context, snap) {
-                                if (snap.connectionState ==
-                                    ConnectionState.done) {
-                                  return Text(
-                                    "Good ${greeting()}, ${snap.data}",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600),
-                                  );
-                                }
-                                return Text(
-                                  "Good ${greeting()}  ",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600),
-                                );
-                              }),
+                          child: Text(
+                            "Good ${greeting()}, $MY_NAME",
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600),
+                          ),
                         ),
                       ],
                     ),
@@ -564,7 +488,7 @@ class _HomeViewState extends State<HomeView> {
                         .collection("Transactions")
                         .document("Pending")
                         .collection(MY_UID)
-                        .orderBy("Timestamp")
+                        .orderBy("Timestamp", descending: true)
                         .limit(1)
                         .snapshots(),
                     builder: (context, snapshot) {
@@ -617,7 +541,7 @@ class _HomeViewState extends State<HomeView> {
                         .collection("Transactions")
                         .document("Confirmed")
                         .collection(MY_UID)
-                        .orderBy("Timestamp")
+                        .orderBy("Timestamp", descending: true)
                         .limit(1)
                         .snapshots(),
                     builder: (context, snapshot) {

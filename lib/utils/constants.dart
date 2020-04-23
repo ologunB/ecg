@@ -41,7 +41,7 @@ String randomString() {
 }
 
 String thePresentTime() {
-  return DateFormat("EEE MMM d, HH:mm").format(DateTime.now());
+  return DateFormat("EEE MMM d HH:mm").format(DateTime.now());
 }
 
 // return DateFormat("EEE MMM d, yyyy HH:mm a").format(DateTime.now());
