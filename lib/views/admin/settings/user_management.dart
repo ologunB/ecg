@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/models/user.dart';
+import 'package:ecgalpha/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -63,26 +64,25 @@ class _UserManagementPageState extends State<UserManagementPage> {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return Container(
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CircularProgressIndicator(),
-                    SizedBox(height: 30),
-                    Text(
-                      "Getting Data",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 22),
-                    ),
-                    SizedBox(height: 30),
-                  ],
-                ),
-                height: 300,
-                width: 300,
-              );
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircularProgressIndicator(),
+                      SizedBox(height: 30),
+                      Text(
+                        "Getting Data",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 22),
+                      ),
+                      SizedBox(height: 30),
+                    ],
+                  ),
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width);
             default:
               return snapshot.data.documents.isEmpty
                   ? Container(
@@ -116,7 +116,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               Navigator.push(
                                   context,
                                   CupertinoPageRoute(
-                                      builder: (context) => UserProfile()));
+                                      builder: (context) => UserProfile(
+                                            user: user,
+                                          )));
                             },
                             child: Card(
                               child: Row(
@@ -173,6 +175,16 @@ class _UserManagementPageState extends State<UserManagementPage> {
                                             fontSize: 18,
                                             fontWeight: FontWeight.w400,
                                             color: Colors.grey),
+                                      ),
+                                      Text(
+                                        "created " +
+                                            timeAgo(DateTime
+                                                .fromMicrosecondsSinceEpoch(
+                                                    user.timeStamp)),
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.red),
                                       ),
                                     ],
                                   )

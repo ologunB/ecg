@@ -297,15 +297,13 @@ class _LoginWidgetState extends State<LoginWidget> {
             .get()
             .then((document) {
           var dATA = document.data;
-          String type = dATA["Type"];
 
-          String uid = type == "User" ? "Uid" : "Admin Uid";
           String rememEmail = rememberMe ? email : "";
           String rememPass = rememberMe ? password : "";
 
           putInDB(
-              type: type,
-              uid: dATA[uid],
+              type: dATA["Type"],
+              uid: dATA["Uid"],
               name: dATA["Full Name"],
               email: dATA["Email"],
               image: dATA["Avatar"],
@@ -321,6 +319,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 builder: (context) => UpdateBankDetails(
                   whereFrom: "login",
                   uuid: user.uid,
+                  type: dATA["Type"],
                 ),
               ),
             );
@@ -581,18 +580,8 @@ class _SignupWidgetState extends State<SignupWidget> {
           mData.putIfAbsent("Account Name", () => " ");
           mData.putIfAbsent("Uid", () => user.uid);
           mData.putIfAbsent("Avatar", () => "");
-
-          _dataRef
-              .child("User Collection")
-              .child(user.uid)
-              .set(mData)
-              .then((b) {
-            showToast("User created, Check email for verification!", context);
-            /*   setState(() {
-              isLoading = false;
-              isLogin = true;
-            });*/
-          });
+          mData.putIfAbsent(
+              "Timestamp", () => DateTime.now().millisecondsSinceEpoch);
 
           Firestore.instance
               .collection("User Collection")
@@ -613,7 +602,6 @@ class _SignupWidgetState extends State<SignupWidget> {
             upEmail.clear();
             upPassword.clear();
             upFName.clear();
-            // showToast("User created, Check email for verification!", context);
             setState(() {
               _autoValidate = false;
               isLoading = false;

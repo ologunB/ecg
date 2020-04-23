@@ -3,6 +3,7 @@ import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/admin/auth/admin_auth_page.dart';
 import 'package:ecgalpha/views/admin/settings/user_management.dart';
 import 'package:ecgalpha/views/user/profile/change_password.dart';
+import 'package:ecgalpha/views/user/profile/update_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -165,6 +166,39 @@ class _ProfileViewState extends State<SettingsView> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
                                   "Send Notification",
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.black),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                                builder: (context) => UpdateBankDetails(
+                                      whereFrom: "profile",
+                                      type: "Admin",
+                                      uuid: MY_UID,
+                                    )));
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(Icons.history, color: Colors.yellow),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Update Bank Details",
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.black),
                                 ),

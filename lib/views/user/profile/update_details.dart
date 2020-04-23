@@ -12,10 +12,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'change_password.dart';
 
 class UpdateBankDetails extends StatefulWidget {
-  final String whereFrom;
+  final String whereFrom, type;
   final String uuid;
 
-  const UpdateBankDetails({Key key, this.whereFrom, this.uuid})
+  const UpdateBankDetails(
+      {Key key,
+      @required this.whereFrom,
+      @required this.uuid,
+      @required this.type})
       : super(key: key);
   @override
   _PaymentMethodState createState() => _PaymentMethodState();
@@ -215,11 +219,14 @@ class _PaymentMethodState extends State<UpdateBankDetails> {
                           widget.whereFrom == "login" ? widget.uuid : MY_UID;
 
                       Firestore.instance
-                          .collection("User Collection")
+                          .collection("${widget.type} Collection")
                           .document(uu)
                           .updateData(m);
 
-                      rootRef.child("User Collection").child(uu).update(m);
+                      rootRef
+                          .child("${widget.type} Collection")
+                          .child(uu)
+                          .update(m);
 
                       Future.delayed(Duration(milliseconds: 3000)).then((c) {
                         showToast("done", context);

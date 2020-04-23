@@ -37,11 +37,13 @@ class _UserProfileState extends State<UserProfile> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.only(bottom: 10.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(30),
                         child: CachedNetworkImage(
-                          imageUrl: user.image,
+                          imageUrl: widget.user.image == ""
+                              ? "ef"
+                              : widget.user.image,
                           height: 60,
                           width: 60,
                           placeholder: (context, url) => ClipRRect(

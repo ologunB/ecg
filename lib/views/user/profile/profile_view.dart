@@ -192,8 +192,11 @@ class _ProfileViewState extends State<ProfileView> {
                   Navigator.push(
                     context,
                     CupertinoPageRoute(
-                      builder: (context) =>
-                          UpdateBankDetails(whereFrom: "profile"),
+                      builder: (context) => UpdateBankDetails(
+                        whereFrom: "profile",
+                        type: "User",
+                        uuid: MY_UID,
+                      ),
                     ),
                   );
                 },

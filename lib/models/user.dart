@@ -11,7 +11,7 @@ class User {
   String get email => _email;
   int get timeStamp => _timeStamp;
 
-  User(this._id, this._email, this._name, this._timeStamp);
+  User(this._id, this._email, this._name, this._timeStamp, this._image);
 
   User.map(dynamic obj) {
     this._id = obj["Uid"];

@@ -3,14 +3,14 @@ import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/partials/custom_loading_button.dart';
 import 'package:ecgalpha/views/user/auth/auth_page.dart';
+import 'package:ecgalpha/views/user/auth/register_complete_page.dart';
+import 'package:ecgalpha/views/user/profile/update_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../admin_layout_template.dart';
 
 class AdminAuthPage extends StatefulWidget {
   @override
@@ -291,16 +291,12 @@ class _LoginWidgetState extends State<LoginWidget> {
             .then((document) {
           var dATA = document.data;
 
-          String type = dATA["Type"];
-
-          String uid = type == "User" ? "Uid" : "Admin Uid";
-
           String rememEmail = rememberMe ? email : "";
           String rememPass = rememberMe ? password : "";
 
           putInDB(
-              type: type,
-              uid: dATA[uid],
+              type: dATA["Type"],
+              uid: dATA["Uid"],
               name: dATA["Full Name"],
               email: dATA["Email"],
               image: dATA["Avatar"],
@@ -310,11 +306,29 @@ class _LoginWidgetState extends State<LoginWidget> {
               rememPass: rememPass,
               rememMail: rememEmail);
 
-          Navigator.of(context).pushReplacement(
+          /*    Navigator.of(context).pushReplacement(
             CupertinoPageRoute(
               builder: (context) => AdminLayoutTemplate(),
             ),
           );
+*/
+          if (dATA["Bank Name"].toString().trim().isEmpty) {
+            Navigator.of(context).pushReplacement(
+              CupertinoPageRoute(
+                builder: (context) => UpdateBankDetails(
+                  whereFrom: "login",
+                  uuid: user.uid,
+                  type: dATA["Type"],
+                ),
+              ),
+            );
+          } else {
+            Navigator.of(context).pushReplacement(
+              CupertinoPageRoute(
+                builder: (context) => RegisterCompleteScreen(),
+              ),
+            );
+          }
         }).catchError((ee) {
           setState(() {
             isLoading = false;
@@ -563,18 +577,8 @@ class _SignupWidgetState extends State<SignupWidget> {
           mData.putIfAbsent("Account Name", () => " ");
           mData.putIfAbsent("Uid", () => user.uid);
           mData.putIfAbsent("Avatar", () => "");
-
-          _dataRef
-              .child("Admin Collection")
-              .child(user.uid)
-              .set(mData)
-              .then((b) {
-            showToast("Admin created, Check email for verification!", context);
-            /*   setState(() {
-              isLoading = false;
-              isLogin = true;
-            });*/
-          });
+          mData.putIfAbsent(
+              "Timestamp", () => DateTime.now().millisecondsSinceEpoch);
 
           Firestore.instance
               .collection("Admin Collection")

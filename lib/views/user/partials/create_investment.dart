@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecgalpha/models/account.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/user/partials/order_confirmed_done.dart';
@@ -19,16 +20,6 @@ class CreateInvestment extends StatefulWidget {
   _PaymentMethodState createState() => _PaymentMethodState();
 }
 
-class Account {
-  String name, number, bank;
-  Account(this.name, this.number, this.bank);
-}
-
-List accounts = [
-  Account("Ologun Richard", "0209339392", "GTBank"),
-  Account("Adebayo Richard", "0203439392", "First Bank")
-];
-
 class _PaymentMethodState extends State<CreateInvestment> {
   File pop;
   Future getImage() async {
@@ -42,6 +33,8 @@ class _PaymentMethodState extends State<CreateInvestment> {
   TextEditingController name = TextEditingController(text: MY_NAME);
   TextEditingController date = TextEditingController(text: thePresentTime());
   TextEditingController amount = TextEditingController();
+
+  List<Account> accounts = [];
 
   bool isLoading = false;
   bool checkedValue = false;
@@ -126,59 +119,82 @@ class _PaymentMethodState extends State<CreateInvestment> {
                         ),
                         Divider(),
                         text("Choose Account"),
-                        DropdownButton<Account>(
-                          hint: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Text("Select the account you sent to"),
-                          ),
-                          value: selectedAccount,
-                          underline: SizedBox(),
-                          items: accounts.map((value) {
-                            return DropdownMenuItem<Account>(
-                              value: value,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          value.name,
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
+                        StreamBuilder(
+                            stream: Firestore.instance
+                                .collection("Admin Collection")
+                                // .orderBy("Timestamp")
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError)
+                                return new Text('Error: ${snapshot.error}');
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.waiting:
+                                  return Text("waiting");
+                                default:
+                                  if (snapshot.data.documents.isNotEmpty) {
+                                    snapshot.data.documents.map((document) {
+                                      Account item = Account.map(document);
+                                      accounts.add(item);
+                                    }).toList();
+                                  }
+                                  return DropdownButton<Account>(
+                                    hint: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10.0),
+                                      child: Text(
+                                          "Select the account you sent to"),
+                                    ),
+                                    value: selectedAccount,
+                                    underline: SizedBox(),
+                                    items: accounts.map((value) {
+                                      return DropdownMenuItem<Account>(
+                                        value: value,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: <Widget>[
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    value.name,
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    children: <Widget>[
+                                                      Text(value.number),
+                                                      SizedBox(
+                                                        width: 20,
+                                                      ),
+                                                      Text(value.bank)
+                                                    ],
+                                                  )
+                                                ],
+                                                mainAxisSize: MainAxisSize.min,
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                        Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: <Widget>[
-                                            Text(value.number),
-                                            SizedBox(
-                                              width: 20,
-                                            ),
-                                            Text(value.bank)
-                                          ],
-                                        )
-                                      ],
-                                      mainAxisSize: MainAxisSize.min,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                          isExpanded: true,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedAccount = value;
-                            });
-                            FocusScope.of(context).unfocus();
-                          },
-                        ),
+                                      );
+                                    }).toList(),
+                                    isExpanded: true,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedAccount = value;
+                                      });
+                                      FocusScope.of(context).unfocus();
+                                    },
+                                  );
+                              }
+                            }),
                         Divider(),
                         text("Proof of Payment"),
                         Padding(
@@ -354,7 +370,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
     mData.putIfAbsent("Name", () => MY_NAME);
     mData.putIfAbsent("Date", () => thePresentTime());
     mData.putIfAbsent("Amount", () => amount.text);
-    String t = selectedAccount.name + "  " + selectedAccount.bank;
+    String t = selectedAccount.name + "__" + selectedAccount.bank;
     mData.putIfAbsent("Account Paid", () => t);
     mData.putIfAbsent("Uid", () => MY_UID);
     mData.putIfAbsent("Timestamp", () => DateTime.now().millisecondsSinceEpoch);
@@ -377,14 +393,14 @@ class _PaymentMethodState extends State<CreateInvestment> {
           .collection("Admin")
           .document(thePresentTime())
           .collection("Transactions")
-          .document("Confirmed")
+          .document("Pending")
           .collection(MY_UID)
           .document(rnd)
           .setData(mData);
 
       Firestore.instance
           .collection("Transactions")
-          .document("Confirmed")
+          .document("Pending")
           .collection(MY_UID)
           .document(rnd)
           .setData(mData)

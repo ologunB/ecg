@@ -1,5 +1,6 @@
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/views/admin/admin_layout_template.dart';
 import 'package:ecgalpha/views/user/auth/auth_page.dart';
 import 'package:ecgalpha/views/user/partials/layout_template.dart';
 import 'package:flutter/material.dart';
@@ -29,21 +30,20 @@ class MyWrapper extends StatefulWidget {
 
 class _MyWrapperState extends State<MyWrapper> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  Future<bool> isLoggedIn;
-  Future<String> remememail, remempass;
+  Future<String> remememail, remempass, type;
 
   @override
   void initState() {
     super.initState();
 
-    isLoggedIn = _prefs.then((prefs) {
-      return (prefs.getBool('isLoggedIn') ?? false);
+    type = _prefs.then((prefs) {
+      return (prefs.getString('type') ?? "null");
     });
     remememail = _prefs.then((prefs) {
-      return (prefs.getString('REMEMBER_EMAIL') ?? false);
+      return (prefs.getString('REMEMBER_EMAIL') ?? "");
     });
     remempass = _prefs.then((prefs) {
-      return (prefs.getString('REMEMBER_pass') ?? false);
+      return (prefs.getString('REMEMBER_pass') ?? "");
     });
 
     doAssign();
@@ -56,13 +56,15 @@ class _MyWrapperState extends State<MyWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-        future: isLoggedIn,
+    return FutureBuilder<String>(
+        future: type,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            bool loggedIn = snapshot.data;
-            if (loggedIn) {
+            String loggedIn = snapshot.data;
+            if (loggedIn == "User") {
               return LayoutTemplate(pageSelectedIndex: 0);
+            } else if (loggedIn == "Admin") {
+              return AdminLayoutTemplate();
             } else {
               return AuthPage();
             }

@@ -447,7 +447,6 @@ class _HomeViewState extends State<HomeView> {
                                 }
                                 i++;
 
-                                snapshot.data.documents.length;
                                 totalConfirmed =
                                     totalConfirmed + int.parse(item.amount);
                               }).toList();
@@ -601,40 +600,4 @@ class _HomeViewState extends State<HomeView> {
       ),
     );
   }
-}
-
-List<String> types = [
-  "Expecting",
-  "Today's Pending",
-  "Today's Confirmed",
-  "Total Pending",
-  "Total Confirmed"
-];
-
-String greeting() {
-  var hour = DateTime.now().hour;
-  if (hour < 12) {
-    return 'Morning';
-  }
-  if (hour < 17) {
-    return 'Afternoon';
-  }
-  return 'Evening';
-}
-
-String timeAgo(DateTime d) {
-  Duration diff = DateTime.now().difference(d);
-  if (diff.inDays > 365)
-    return "${(diff.inDays / 365).floor()} ${(diff.inDays / 365).floor() == 1 ? "year" : "years"} ago";
-  if (diff.inDays > 30)
-    return "${(diff.inDays / 30).floor()} ${(diff.inDays / 30).floor() == 1 ? "month" : "months"} ago";
-  if (diff.inDays > 7)
-    return "${(diff.inDays / 7).floor()} ${(diff.inDays / 7).floor() == 1 ? "week" : "weeks"} ago";
-  if (diff.inDays > 0)
-    return "${diff.inDays} ${diff.inDays == 1 ? "day" : "days"} ago";
-  if (diff.inHours > 0)
-    return "${diff.inHours} ${diff.inHours == 1 ? "hour" : "hours"} ago";
-  if (diff.inMinutes > 0)
-    return "${diff.inMinutes} ${diff.inMinutes == 1 ? "minute" : "minutes"} ago";
-  return "just now";
 }
