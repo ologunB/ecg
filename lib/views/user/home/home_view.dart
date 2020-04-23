@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/utils/carousel_slider.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/views/partials/each_order_item.dart';
 import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +18,68 @@ class HomeView extends StatefulWidget {
   @override
   _HomeViewState createState() => _HomeViewState();
 }
+
+Widget middleItem(String type, String amount, String time) => Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.greenAccent[100],
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(25),
+            bottomRight: Radius.circular(10),
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(25),
+          ),
+        ),
+        child: FlatButton(
+          onPressed: () {},
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                type,
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.black),
+              ),
+              SizedBox(height: 15),
+              Text(
+                "₦ $amount",
+                style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.green),
+              ),
+              SizedBox(height: 7),
+              Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.lightGreen,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(15),
+                      bottomRight: Radius.circular(5),
+                      topLeft: Radius.circular(5),
+                      topRight: Radius.circular(15),
+                    ),
+                  ),
+                  padding: EdgeInsets.all(5),
+                  child: Text(
+                    time,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
 
 class _HomeViewState extends State<HomeView> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -59,6 +124,17 @@ class _HomeViewState extends State<HomeView> {
     MY_BANK_NAME = await bName;
     MY_IMAGE = await image;
   }
+
+  int totalExpecting = 0;
+  String expectingTime;
+  int todayPending = 0;
+  String todayPendingTime;
+  int todayConfirmed = 0;
+  String todayConfirmedTime;
+  int totalPending = 0;
+  String totalPendingTime;
+  int totalConfirmed = 0;
+  String totalConfirmedTime;
 
   @override
   Widget build(BuildContext context) {
@@ -118,27 +194,30 @@ class _HomeViewState extends State<HomeView> {
                               );
                             }),
                         SizedBox(width: 10),
-                        FutureBuilder(
-                            future: name,
-                            builder: (context, snap) {
-                              if (snap.connectionState ==
-                                  ConnectionState.done) {
+                        Flexible(
+                          child: FutureBuilder(
+                              future: name,
+                              builder: (context, snap) {
+                                if (snap.connectionState ==
+                                    ConnectionState.done) {
+                                  return Text(
+                                    "Good ${greeting()}, ${snap.data}",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  );
+                                }
                                 return Text(
-                                  "Hi, ${snap.data}",
+                                  "Good ${greeting()}  ",
                                   style: TextStyle(
-                                      fontSize: 22,
+                                      fontSize: 15,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w600),
                                 );
-                              }
-                              return Text(
-                                "Hi,  ",
-                                style: TextStyle(
-                                    fontSize: 22,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600),
-                              );
-                            }),
+                              }),
+                        ),
                       ],
                     ),
                   ),
@@ -179,7 +258,7 @@ class _HomeViewState extends State<HomeView> {
                           borderRadius: BorderRadius.all(Radius.circular(15.0)),
                           image: DecorationImage(
                             image: AssetImage(""),
-                            fit: BoxFit.fill,
+                            fit: BoxFit.contain,
                           ),
                         ),
                         child: Stack(
@@ -194,13 +273,16 @@ class _HomeViewState extends State<HomeView> {
                             ),
                             Align(
                               alignment: Alignment.bottomCenter,
-                              child: Text(
-                                "Advertise on this space",
-                                style: TextStyle(
-                                    backgroundColor: Colors.blueAccent,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text(
+                                  "Advertise on this space",
+                                  style: TextStyle(
+                                      backgroundColor: Colors.blueAccent,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white),
+                                ),
                               ),
                             )
                           ],
@@ -221,75 +303,246 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               Container(
-                height: 150,
-                width: 10000,
-                padding: EdgeInsets.all(5),
-                child: ListView.builder(
-                  itemCount: types.length,
+                height: 155,
+                child: ListView(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, i) {
-                    return Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.greenAccent[100],
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(25),
-                            bottomRight: Radius.circular(10),
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(25),
-                          ),
-                        ),
-                        child: FlatButton(
-                          onPressed: () {},
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                types[i],
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w300,
-                                    color: Colors.black),
-                              ),
-                              SizedBox(height: 15),
-                              Text(
-                                "₦2000",
-                                style: TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.green),
-                              ),
-                              SizedBox(height: 7),
-                              Padding(
-                                padding: EdgeInsets.only(top: 8.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.lightGreen,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(15),
-                                      bottomRight: Radius.circular(5),
-                                      topLeft: Radius.circular(5),
-                                      topRight: Radius.circular(15),
-                                    ),
-                                  ),
-                                  padding: EdgeInsets.all(5),
-                                  child: Text(
-                                    "4 days",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                  children: <Widget>[
+                    StreamBuilder<QuerySnapshot>(
+                      stream: Firestore.instance
+                          .collection("Transactions")
+                          .document("Expecting")
+                          .collection(MY_UID)
+                          .orderBy("Timestamp", descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Container(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(),
+                              height: 100,
+                              width: 100,
+                            );
+                          default:
+                            int i = 0;
+                            if (snapshot.data.documents.isNotEmpty) {
+                              snapshot.data.documents.map((document) {
+                                Investment item = Investment.map(document);
+                                if (i == 0) {
+                                  expectingTime = timeAgo(
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          item.timeStamp));
+                                }
+                                i++;
+
+                                snapshot.data.documents.length;
+                                totalExpecting =
+                                    totalExpecting + int.parse(item.amount);
+                              }).toList();
+                            }
+                            return snapshot.data.documents.isEmpty
+                                ? Container(
+                                    child: middleItem("Expecting", "0", "--"),
+                                  )
+                                : Container(
+                                    child: middleItem(
+                                        "Expecting",
+                                        commaFormat.format(totalExpecting),
+                                        expectingTime),
+                                  );
+                        }
+                      },
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: Firestore.instance
+                          .collection("Transactions")
+                          .document("Pending")
+                          .collection(MY_UID)
+                          .orderBy("Timestamp", descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Container(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(),
+                              height: 100,
+                              width: 100,
+                            );
+                          default:
+                            int i = 0;
+                            if (snapshot.data.documents.isNotEmpty) {
+                              snapshot.data.documents.map((document) {
+                                Investment item = Investment.map(document);
+                                if (i == 0) {
+                                  todayPendingTime = timeAgo(
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          item.timeStamp));
+                                }
+                                i++;
+
+                                snapshot.data.documents.length;
+                                todayPending =
+                                    todayPending + int.parse(item.amount);
+                              }).toList();
+                            }
+                            return snapshot.data.documents.isEmpty
+                                ? Container(
+                                    child: middleItem(
+                                        "Today's Pending", "0", "--"),
+                                  )
+                                : Container(
+                                    child: middleItem(
+                                        "Today's Pending",
+                                        commaFormat.format(todayPending),
+                                        todayPendingTime),
+                                  );
+                        }
+                      },
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: Firestore.instance
+                          .collection("Transactions")
+                          .document("Confirmed")
+                          .collection(MY_UID)
+                          .orderBy("Timestamp", descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Container(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(),
+                              height: 100,
+                              width: 100,
+                            );
+                          default:
+                            int i = 0;
+                            if (snapshot.data.documents.isNotEmpty) {
+                              snapshot.data.documents.map((document) {
+                                Investment item = Investment.map(document);
+                                if (i == 0) {
+                                  todayConfirmedTime = timeAgo(
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          item.timeStamp));
+                                }
+                                i++;
+
+                                snapshot.data.documents.length;
+                                todayConfirmed =
+                                    todayConfirmed + int.parse(item.amount);
+                              }).toList();
+                            }
+                            return snapshot.data.documents.isEmpty
+                                ? Container(
+                                    child: middleItem(
+                                        "Today's Confirmed", "0", "--"),
+                                  )
+                                : Container(
+                                    child: middleItem(
+                                        "Today's Confirmed",
+                                        commaFormat.format(todayConfirmed),
+                                        todayConfirmedTime),
+                                  );
+                        }
+                      },
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: Firestore.instance
+                          .collection("Transactions")
+                          .document("Pending")
+                          .collection(MY_UID)
+                          .orderBy("Timestamp", descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Container(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(),
+                              height: 100,
+                              width: 100,
+                            );
+                          default:
+                            int i = 0;
+                            if (snapshot.data.documents.isNotEmpty) {
+                              snapshot.data.documents.map((document) {
+                                Investment item = Investment.map(document);
+                                if (i == 0) {
+                                  totalPendingTime = timeAgo(
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          item.timeStamp));
+                                }
+                                i++;
+
+                                snapshot.data.documents.length;
+                                totalPending =
+                                    totalPending + int.parse(item.amount);
+                              }).toList();
+                            }
+                            return snapshot.data.documents.isEmpty
+                                ? Container(
+                                    child:
+                                        middleItem("Total Pending", "0", "--"),
+                                  )
+                                : Container(
+                                    child: middleItem(
+                                        "Total Pending",
+                                        commaFormat.format(totalPending),
+                                        totalPendingTime),
+                                  );
+                        }
+                      },
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: Firestore.instance
+                          .collection("Transactions")
+                          .document("Confirmed")
+                          .collection(MY_UID)
+                          .orderBy("Timestamp", descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Container(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(),
+                              height: 100,
+                              width: 100,
+                            );
+                          default:
+                            int i = 0;
+                            if (snapshot.data.documents.isNotEmpty) {
+                              snapshot.data.documents.map((document) {
+                                Investment item = Investment.map(document);
+                                if (i == 0) {
+                                  totalConfirmedTime = timeAgo(
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          item.timeStamp));
+                                }
+                                i++;
+
+                                snapshot.data.documents.length;
+                                totalConfirmed =
+                                    totalConfirmed + int.parse(item.amount);
+                              }).toList();
+                            }
+                            return snapshot.data.documents.isEmpty
+                                ? Container(
+                                    child: middleItem(
+                                        "Total Confirmed", "0", "--"),
+                                  )
+                                : Container(
+                                    child: middleItem(
+                                        "Total Confirmed",
+                                        commaFormat.format(totalPending),
+                                        totalConfirmedTime),
+                                  );
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
               Padding(
@@ -302,12 +555,113 @@ class _HomeViewState extends State<HomeView> {
                       fontWeight: FontWeight.w600),
                 ),
               ),
-              ListView.builder(
-                itemCount: 2,
+              ListView(
+                // physics: FixedExtentScrollPhysics(),
                 shrinkWrap: true,
-                itemBuilder: (context, position) {
-                  return Text("ghv m");
-                },
+                children: <Widget>[
+                  StreamBuilder<QuerySnapshot>(
+                    stream: Firestore.instance
+                        .collection("Transactions")
+                        .document("Pending")
+                        .collection(MY_UID)
+                        .orderBy("Timestamp")
+                        .limit(1)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return Container(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                CircularProgressIndicator(),
+                                Text(
+                                  "Getting Data",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16),
+                                ),
+                              ],
+                            ),
+                            height: 100,
+                            width: 100,
+                          );
+                        default:
+                          return snapshot.data.documents.isEmpty
+                              ? Container(
+                                  height: 100,
+                                  width: 100,
+                                  child: Text("Empty"),
+                                )
+                              : Container(
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    children:
+                                        snapshot.data.documents.map((document) {
+                                      return EachOrderItem(
+                                        investment: Investment.map(document),
+                                        color: Styles.appPrimaryColor,
+                                        type: "Pending",
+                                      );
+                                    }).toList(),
+                                  ),
+                                );
+                      }
+                    },
+                  ),
+                  StreamBuilder<QuerySnapshot>(
+                    stream: Firestore.instance
+                        .collection("Transactions")
+                        .document("Confirmed")
+                        .collection(MY_UID)
+                        .orderBy("Timestamp")
+                        .limit(1)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return Container(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                CircularProgressIndicator(),
+                                Text(
+                                  "Getting Data",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16),
+                                ),
+                              ],
+                            ),
+                            height: 100,
+                            width: 100,
+                          );
+                        default:
+                          return snapshot.data.documents.isEmpty
+                              ? Container()
+                              : Container(
+                                  child: ListView(
+                                    shrinkWrap: true,
+                                    children:
+                                        snapshot.data.documents.map((document) {
+                                      return EachOrderItem(
+                                        investment: Investment.map(document),
+                                        color: Colors.green,
+                                        type: "Confirmed",
+                                      );
+                                    }).toList(),
+                                  ),
+                                );
+                      }
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -325,4 +679,38 @@ class _HomeViewState extends State<HomeView> {
   }
 }
 
-List<String> types = ["Expecting", "Total Pending", "Total Confirmed"];
+List<String> types = [
+  "Expecting",
+  "Today's Pending",
+  "Today's Confirmed",
+  "Total Pending",
+  "Total Confirmed"
+];
+
+String greeting() {
+  var hour = DateTime.now().hour;
+  if (hour < 12) {
+    return 'Morning';
+  }
+  if (hour < 17) {
+    return 'Afternoon';
+  }
+  return 'Evening';
+}
+
+String timeAgo(DateTime d) {
+  Duration diff = DateTime.now().difference(d);
+  if (diff.inDays > 365)
+    return "${(diff.inDays / 365).floor()} ${(diff.inDays / 365).floor() == 1 ? "year" : "years"} ago";
+  if (diff.inDays > 30)
+    return "${(diff.inDays / 30).floor()} ${(diff.inDays / 30).floor() == 1 ? "month" : "months"} ago";
+  if (diff.inDays > 7)
+    return "${(diff.inDays / 7).floor()} ${(diff.inDays / 7).floor() == 1 ? "week" : "weeks"} ago";
+  if (diff.inDays > 0)
+    return "${diff.inDays} ${diff.inDays == 1 ? "day" : "days"} ago";
+  if (diff.inHours > 0)
+    return "${diff.inHours} ${diff.inHours == 1 ? "hour" : "hours"} ago";
+  if (diff.inMinutes > 0)
+    return "${diff.inMinutes} ${diff.inMinutes == 1 ? "minute" : "minutes"} ago";
+  return "just now";
+}

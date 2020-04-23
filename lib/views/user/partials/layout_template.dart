@@ -44,6 +44,7 @@ class _LayoutTemplateState extends State<LayoutTemplate> {
             setState(() {
               widget.fromWhere = "er";
               pageSelectedIndex = i;
+              widget.pageSelectedIndex = i;
             });
           },
           currentIndex:

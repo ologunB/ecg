@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/utils/constants.dart';
-import 'package:ecgalpha/views/partials/custom_button.dart';
 import 'package:ecgalpha/views/partials/each_order_item.dart';
-import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +9,8 @@ class CustomOrderPage extends StatefulWidget {
   final String type;
   final Color color;
 
-  const CustomOrderPage({Key key, this.type, this.color}) : super(key: key);
+  const CustomOrderPage({Key key, @required this.type, @required this.color})
+      : super(key: key);
   @override
   _ListViewNoteState createState() => _ListViewNoteState();
 }
@@ -74,15 +73,6 @@ class _ListViewNoteState extends State<CustomOrderPage>
                               fontSize: 22),
                         ),
                         SizedBox(height: 30),
-                        CustomButton(
-                          title: "Make an Investment",
-                          onPress: () {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) => CreateInvestment()));
-                          },
-                        )
                       ],
                     ),
                   )

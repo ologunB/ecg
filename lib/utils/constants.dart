@@ -21,7 +21,9 @@ String MY_NAME,
     MY_BANK_ACCOUNT_NAME,
     MY_ACCOUNT_NUMBER,
     MY_BANK_NAME,
-    MY_IMAGE;
+    MY_IMAGE,
+    REMEMBER_PASS,
+    REMEMBER_EMAIL;
 
 showToast(String msg, BuildContext context) {
   Toast.show(msg, context, duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
@@ -39,8 +41,10 @@ String randomString() {
 }
 
 String thePresentTime() {
-  return DateFormat("EEE MMM d, yyyy HH:mm a").format(DateTime.now());
+  return DateFormat("EEE MMM d, HH:mm").format(DateTime.now());
 }
+
+// return DateFormat("EEE MMM d, yyyy HH:mm a").format(DateTime.now());
 
 final commaFormat = new NumberFormat("#,##0", "en_US");
 

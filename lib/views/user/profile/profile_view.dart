@@ -352,28 +352,31 @@ class _ProfileViewState extends State<ProfileView> {
                                 ),
                               ),
                               InkWell(
-                                onTap: () async {
-                                  Future<SharedPreferences> _prefs =
-                                      SharedPreferences.getInstance();
+                                onTap: () {
+                                  FirebaseAuth.instance
+                                      .signOut()
+                                      .then((val) async {
+                                    Future<SharedPreferences> _prefs =
+                                        SharedPreferences.getInstance();
 
-                                  final SharedPreferences prefs = await _prefs;
+                                    final SharedPreferences prefs =
+                                        await _prefs;
 
-                                  setState(() {
-                                    prefs.setBool("isLoggedIn", false);
-                                    prefs.remove("type");
-                                    prefs.remove("uid");
-                                    prefs.remove("email");
-                                    prefs.remove("name");
+                                    setState(() {
+                                      prefs.setBool("isLoggedIn", false);
+                                      prefs.remove("type");
+                                      prefs.remove("uid");
+                                      prefs.remove("email");
+                                      prefs.remove("name");
+                                    });
+                                    Navigator.pop(context);
+                                    Navigator.pushReplacement(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (context) => AuthPage(),
+                                      ),
+                                    );
                                   });
-                                  FirebaseAuth.instance.signOut();
-
-                                  Navigator.pop(context);
-                                  Navigator.pushReplacement(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) => AuthPage(),
-                                    ),
-                                  );
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),

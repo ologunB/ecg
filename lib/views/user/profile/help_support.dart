@@ -157,22 +157,33 @@ class _HelpAndSupportState extends State<HelpAndSupport> {
                     setState(() {
                       isLoading = true;
                     });
+
+                    String rnd = "SUP" +
+                        DateTime.now().millisecondsSinceEpoch.toString();
+
                     final Map<String, Object> m = Map();
                     m.putIfAbsent("Category", () => selectedCategory);
                     m.putIfAbsent("Title", () => title.text);
                     m.putIfAbsent("Description", () => descrpt.text);
-                    m.putIfAbsent("Date", () => thePresentTime);
+                    m.putIfAbsent("Date", () => thePresentTime());
                     m.putIfAbsent("Uid", () => MY_UID);
+                    m.putIfAbsent("id", () => rnd);
+                    m.putIfAbsent("Timestamp",
+                        () => DateTime.now().millisecondsSinceEpoch);
 
-                     if (pop != null) {
+                    if (pop != null) {
                       String url = await uploadImage(pop);
                       m.putIfAbsent("POP", () => url);
+                    } else {
+                      m.putIfAbsent("POP", () => "empty");
                     }
+
                     Firestore.instance
                         .collection("Help Collection")
                         .document("Unresolved")
                         .collection(MY_UID)
-                        .add(m)
+                        .document(rnd)
+                        .setData(m)
                         .then((a) {
                       setState(() {
                         isLoading = false;
@@ -180,6 +191,32 @@ class _HelpAndSupportState extends State<HelpAndSupport> {
                       Toast.show("Ticket Created!", context,
                           duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
                       Navigator.pop(context);
+                      showDialog(
+                          context: context,
+                          builder: (_) {
+                            return AlertDialog(
+                              content: Text(
+                                "Tickets will be attended to by support as soon as possible. Thanks for using ECG",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              actions: <Widget>[
+/*
+                                InkWell(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "CONTINUE",
+                                        style: TextStyle(
+                                            color: Styles.appPrimaryColor),
+                                      ),
+                                    ))
+*/
+                              ],
+                            );
+                          });
                     });
                   },
             icon: isLoading

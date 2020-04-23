@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
-import 'package:ecgalpha/views/user/orders/confirmed/order_confirmed_done.dart';
+import 'package:ecgalpha/views/user/partials/order_confirmed_done.dart';
 import 'package:ecgalpha/views/user/profile/change_password.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -252,7 +252,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
               onPress: () {
                 if (!checkedValue || pop == null) {
                   showToast("Upload a Proof of Payment!", context);
-                  return;
+                  // return;
                 }
                 if (amount.text.isEmpty || selectedAccount == null) {
                   showToast("Fill all values!", context);
@@ -347,6 +347,8 @@ class _PaymentMethodState extends State<CreateInvestment> {
   }
 
   void confirmPayment(_setState) async {
+    String rnd = "INV" + DateTime.now().millisecondsSinceEpoch.toString();
+
     Map<String, Object> mData = Map();
     mData.putIfAbsent("Name", () => MY_NAME);
     mData.putIfAbsent("Date", () => thePresentTime());
@@ -355,27 +357,30 @@ class _PaymentMethodState extends State<CreateInvestment> {
     mData.putIfAbsent("Account Paid", () => t);
     mData.putIfAbsent("Uid", () => MY_UID);
     mData.putIfAbsent("Timestamp", () => DateTime.now().millisecondsSinceEpoch);
+    mData.putIfAbsent("id", () => rnd);
 
-    if (pop != null) {
+    // if (pop != null) {
+    if (true) {
       _setState(() {
         isLoading = true;
       });
-      StorageReference storeRef = _storageRef.child("images/${randomString()}");
+
+      /*StorageReference storeRef = _storageRef.child("images/${randomString()}");
       StorageUploadTask uploadTask = storeRef.putFile(pop);
       StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
       String url = (await downloadUrl.ref.getDownloadURL());
       mData.putIfAbsent("POP", () => url);
-
-      CollectionReference ref = Firestore.instance
+*/
+      Firestore.instance
           .collection("Transactions")
-          .document("Pending")
-          .collection(MY_UID);
-
-      ref.add(mData).then((val) {
+          .document("Confirmed")
+          .collection(MY_UID)
+          .document(rnd)
+          .setData(mData)
+          .then((val) {
         _setState(() {
           isLoading = true;
         });
-        ref.document(val.documentID).updateData({"id": val.documentID});
         Navigator.pushReplacement(
             context,
             CupertinoPageRoute(

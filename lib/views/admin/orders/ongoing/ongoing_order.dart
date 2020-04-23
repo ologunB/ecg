@@ -1,4 +1,4 @@
-import 'package:ecgalpha/views/user/orders/confirmed/order_details.dart';
+import 'package:ecgalpha/views/user/orders/order_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

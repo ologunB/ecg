@@ -1,3 +1,4 @@
+import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/user/auth/auth_page.dart';
 import 'package:ecgalpha/views/user/partials/layout_template.dart';
@@ -29,6 +30,7 @@ class MyWrapper extends StatefulWidget {
 class _MyWrapperState extends State<MyWrapper> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Future<bool> isLoggedIn;
+  Future<String> remememail, remempass;
 
   @override
   void initState() {
@@ -37,6 +39,19 @@ class _MyWrapperState extends State<MyWrapper> {
     isLoggedIn = _prefs.then((prefs) {
       return (prefs.getBool('isLoggedIn') ?? false);
     });
+    remememail = _prefs.then((prefs) {
+      return (prefs.getString('REMEMBER_EMAIL') ?? false);
+    });
+    remempass = _prefs.then((prefs) {
+      return (prefs.getString('REMEMBER_pass') ?? false);
+    });
+
+    doAssign();
+  }
+
+  void doAssign() async {
+    REMEMBER_EMAIL = await remememail;
+    REMEMBER_PASS = await remempass;
   }
 
   @override

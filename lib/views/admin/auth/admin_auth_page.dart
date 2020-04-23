@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/partials/custom_loading_button.dart';
-import 'package:ecgalpha/views/user/auth/register_complete_page.dart';
-import 'package:ecgalpha/views/user/profile/update_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,9 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthPage extends StatefulWidget {
+import '../admin_layout_template.dart';
+
+class AdminAuthPage extends StatefulWidget {
   @override
-  _AuthPageState createState() => _AuthPageState();
+  _AdminAuthPageState createState() => _AdminAuthPageState();
 }
 
 String validateEmail(value) {
@@ -35,7 +35,7 @@ DatabaseReference _dataRef = FirebaseDatabase.instance.reference();
 bool isLogin = true;
 TabController controller;
 
-class _AuthPageState extends State<AuthPage>
+class _AdminAuthPageState extends State<AdminAuthPage>
     with SingleTickerProviderStateMixin {
   @override
   void initState() {
@@ -238,15 +238,8 @@ class LoginWidget extends StatefulWidget {
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
-  TextEditingController inEmail;
-  TextEditingController inPassword;
-
-  @override
-  void initState() {
-    inEmail = TextEditingController(text: REMEMBER_EMAIL);
-    inPassword = TextEditingController(text: REMEMBER_PASS);
-    super.initState();
-  }
+  TextEditingController inEmail = TextEditingController();
+  TextEditingController inPassword = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   bool rememberMe = false;
@@ -277,16 +270,16 @@ class _LoginWidgetState extends State<LoginWidget> {
         }
 
         Firestore.instance
-            .collection("User Collection")
+            .collection("Admin Collection")
             .document(user.uid)
             .get()
             .then((document) {
-          //   var kEYS = snapshot.value.keys;
           var dATA = document.data;
 
           String type = dATA["Type"];
 
           String uid = type == "User" ? "Uid" : "Admin Uid";
+
           String rememEmail = rememberMe ? email : "";
           String rememPass = rememberMe ? password : "";
 
@@ -302,22 +295,11 @@ class _LoginWidgetState extends State<LoginWidget> {
               rememPass: rememPass,
               rememMail: rememEmail);
 
-          if (dATA["Bank Name"].toString().trim().isEmpty) {
-            Navigator.of(context).pushReplacement(
-              CupertinoPageRoute(
-                builder: (context) => UpdateBankDetails(
-                  whereFrom: "login",
-                  uuid: user.uid,
-                ),
-              ),
-            );
-          } else {
-            Navigator.of(context).pushReplacement(
-              CupertinoPageRoute(
-                builder: (context) => RegisterCompleteScreen(),
-              ),
-            );
-          }
+          Navigator.of(context).pushReplacement(
+            CupertinoPageRoute(
+              builder: (context) => AdminLayoutTemplate(),
+            ),
+          );
         }).catchError((ee) {
           setState(() {
             isLoading = false;
@@ -354,10 +336,9 @@ class _LoginWidgetState extends State<LoginWidget> {
     final SharedPreferences prefs = await _prefs;
     setState(() {
       prefs.setBool("isLoggedIn", true);
-      prefs.setString("uid", uid);
-
       prefs.setString("REMEMBER_EMAIL", rememMail);
       prefs.setString("REMEMBER_PASS", rememPass);
+      prefs.setString("uid", uid);
       prefs.setString("email", email);
       prefs.setString("name", name);
       prefs.setString("type", type);
@@ -569,11 +550,11 @@ class _SignupWidgetState extends State<SignupWidget> {
           mData.putIfAbsent("Avatar", () => "");
 
           _dataRef
-              .child("User Collection")
+              .child("Admin Collection")
               .child(user.uid)
               .set(mData)
               .then((b) {
-            showToast("User created, Check email for verification!", context);
+            showToast("Admin created, Check email for verification!", context);
             /*   setState(() {
               isLoading = false;
               isLogin = true;
@@ -581,11 +562,11 @@ class _SignupWidgetState extends State<SignupWidget> {
           });
 
           Firestore.instance
-              .collection("User Collection")
+              .collection("Admin Collection")
               .document(user.uid)
               .setData(mData)
               .then((val) {
-            showToast("User created, Check email for verification!", context);
+            showToast("Admin created, Check email for verification!", context);
             setState(() {
               isLoading = false;
               isLogin = true;
@@ -596,7 +577,7 @@ class _SignupWidgetState extends State<SignupWidget> {
         setState(() {
           isLoading = false;
         });
-        showToast("User doesn't exist", context);
+        showToast("Admin doesn't exist", context);
       }
       return;
     }).catchError((e) {
@@ -627,7 +608,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         if (value.isEmpty) {
-                          return 'Please enter your Full name!';
+                          return 'Please enter your Admin name!';
                         } else if (value.length < 6) {
                           return 'Characters must be greater than 6 characters!';
                         }
@@ -642,7 +623,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                           child: Icon(Icons.person, color: Colors.grey),
                         ),
                         contentPadding: EdgeInsets.all(10),
-                        hintText: 'Full Name',
+                        hintText: 'Admin Name',
                         hintStyle: TextStyle(
                             color: Colors.grey[500],
                             fontSize: 20,
@@ -756,7 +737,7 @@ class _SignupWidgetState extends State<SignupWidget> {
                 RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
-                      text: "By signing up you agree to our ",
+                      text: "By signing up you, I agree to my ",
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,

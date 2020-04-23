@@ -24,7 +24,6 @@ class _EachOrderItemState extends State<EachOrderItem> {
   @override
   Widget build(BuildContext context) {
     Color color = widget.color;
-
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -32,7 +31,7 @@ class _EachOrderItemState extends State<EachOrderItem> {
             CupertinoPageRoute(
                 builder: (context) => OrderDetails(
                       investment: widget.investment,
-                      color: widget.color,
+                      color: color,
                       type: widget.type,
                     )));
       },
@@ -50,7 +49,7 @@ class _EachOrderItemState extends State<EachOrderItem> {
                     child: Text(
                       widget.investment.id.substring(0, 10),
                       style: TextStyle(
-                          fontSize: 19,
+                          fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: Colors.black),
                     ),
