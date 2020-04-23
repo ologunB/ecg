@@ -9,8 +9,11 @@ class CustomOrderPage extends StatefulWidget {
   final String type;
   final Color color;
 
-  const CustomOrderPage({Key key, @required this.type, @required this.color})
-      : super(key: key);
+  const CustomOrderPage({
+    Key key,
+    @required this.type,
+    @required this.color,
+  }) : super(key: key);
   @override
   _ListViewNoteState createState() => _ListViewNoteState();
 }

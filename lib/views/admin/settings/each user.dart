@@ -1,11 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecgalpha/models/user.dart';
 import 'package:ecgalpha/utils/styles.dart';
-import 'package:ecgalpha/views/admin/orders/cancelled/cancelled_order.dart';
-import 'package:ecgalpha/views/admin/orders/confirmed/confirmed_order.dart';
-import 'package:ecgalpha/views/admin/orders/ongoing/ongoing_order.dart';
+import 'package:ecgalpha/views/user/orders/custom_order_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserProfile extends StatefulWidget {
+  final User user;
+
+  const UserProfile({Key key, this.user}) : super(key: key);
   @override
   _UserProfileState createState() => _UserProfileState();
 }
@@ -13,6 +16,8 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
+    User user = widget.user;
+
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
@@ -33,21 +38,38 @@ class _UserProfileState extends State<UserProfile> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundImage: AssetImage(
-                          "assets/images/person.png",
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(30),
+                        child: CachedNetworkImage(
+                          imageUrl: user.image,
+                          height: 60,
+                          width: 60,
+                          placeholder: (context, url) => ClipRRect(
+                            borderRadius: BorderRadius.circular(40.0),
+                            child: Image(
+                                image: AssetImage("assets/images/person.png"),
+                                height: 60,
+                                width: 60,
+                                fit: BoxFit.contain),
+                          ),
+                          errorWidget: (context, url, error) => ClipRRect(
+                            borderRadius: BorderRadius.circular(40.0),
+                            child: Image(
+                                image: AssetImage("assets/images/person.png"),
+                                height: 60,
+                                width: 60,
+                                fit: BoxFit.contain),
+                          ),
                         ),
-                        backgroundColor: Colors.grey[100],
                       ),
                     ),
-                    Text("ECG Admin 1",
+                    Text(user.name,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 20,
                             color: Colors.black,
                             fontWeight: FontWeight.bold)),
-                    Text("fichardfredrick@yahoo.com",
+                    Text(user.email,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 18,
@@ -173,9 +195,18 @@ class _UserProfileState extends State<UserProfile> {
                             height: double.infinity,
                             width: double.infinity,
                             child: TabBarView(children: [
-                              ConfirmedOrders(),
-                              OngoingOrders(),
-                              CancelledOrders()
+                              CustomOrderPage(
+                                  type: "Pending",
+                                  color: Styles.appPrimaryColor,
+                                  theUID: user.id),
+                              CustomOrderPage(
+                                  type: "Confirmed",
+                                  color: Colors.lightGreen,
+                                  theUID: user.id),
+                              CustomOrderPage(
+                                  type: "Cancelled",
+                                  color: Colors.red,
+                                  theUID: user.id)
                             ]),
                           ),
                         ),

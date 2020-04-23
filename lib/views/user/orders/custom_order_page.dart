@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/models/investment.dart';
-import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/views/partials/custom_button.dart';
 import 'package:ecgalpha/views/partials/each_order_item.dart';
 import 'package:ecgalpha/views/user/partials/create_investment.dart';
@@ -10,8 +9,10 @@ import 'package:flutter/material.dart';
 class CustomOrderPage extends StatefulWidget {
   final String type;
   final Color color;
+  final String theUID;
 
-  const CustomOrderPage({Key key, this.type, this.color}) : super(key: key);
+  const CustomOrderPage({Key key, this.type, this.color, this.theUID})
+      : super(key: key);
   @override
   _ListViewNoteState createState() => _ListViewNoteState();
 }
@@ -27,7 +28,7 @@ class _ListViewNoteState extends State<CustomOrderPage>
       stream: Firestore.instance
           .collection("Transactions")
           .document(widget.type)
-          .collection(MY_UID)
+          .collection(widget.theUID)
           .orderBy("Timestamp")
           .snapshots(),
       builder: (context, snapshot) {

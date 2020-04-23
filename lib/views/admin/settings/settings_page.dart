@@ -1,8 +1,12 @@
+import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/views/admin/auth/admin_auth_page.dart';
 import 'package:ecgalpha/views/admin/settings/user_management.dart';
 import 'package:ecgalpha/views/user/profile/change_password.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsView extends StatefulWidget {
   SettingsView({Key key}) : super(key: key);
@@ -33,13 +37,13 @@ class _ProfileViewState extends State<SettingsView> {
                         backgroundColor: Colors.grey[100],
                       ),
                     ),
-                    Text("ECG Admin 1",
+                    Text(MY_NAME,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 20,
                             color: Colors.black,
                             fontWeight: FontWeight.bold)),
-                    Text("fichardfredrick@yahoo.com",
+                    Text(MY_EMAIL,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 18,
@@ -98,8 +102,8 @@ class _ProfileViewState extends State<SettingsView> {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold),
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.w400),
                                     ),
                                   ),
                                   content: TextField(
@@ -122,8 +126,8 @@ class _ProfileViewState extends State<SettingsView> {
                                           "CANCEL",
                                           style: TextStyle(
                                               color: Colors.grey,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w400),
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w300),
                                         ),
                                       ),
                                     ),
@@ -137,8 +141,8 @@ class _ProfileViewState extends State<SettingsView> {
                                           "SEND MESSAGE",
                                           style: TextStyle(
                                               color: Styles.appPrimaryColor,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600),
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400),
                                         ),
                                       ),
                                     )
@@ -277,7 +281,31 @@ class _ProfileViewState extends State<SettingsView> {
                                     ),
                                     InkWell(
                                       onTap: () {
-                                        Navigator.pop(context);
+                                        FirebaseAuth.instance
+                                            .signOut()
+                                            .then((val) async {
+                                          Future<SharedPreferences> _prefs =
+                                              SharedPreferences.getInstance();
+
+                                          final SharedPreferences prefs =
+                                              await _prefs;
+
+                                          setState(() {
+                                            prefs.setBool("isLoggedIn", false);
+                                            prefs.remove("type");
+                                            prefs.remove("uid");
+                                            prefs.remove("email");
+                                            prefs.remove("name");
+                                          });
+                                          Navigator.pop(context);
+                                          Navigator.pushReplacement(
+                                            context,
+                                            CupertinoPageRoute(
+                                              builder: (context) =>
+                                                  AdminAuthPage(),
+                                            ),
+                                          );
+                                        });
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),

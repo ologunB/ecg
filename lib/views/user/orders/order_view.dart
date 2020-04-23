@@ -1,3 +1,4 @@
+import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:flutter/cupertino.dart';
@@ -72,9 +73,12 @@ class _OrdersViewState extends State<OrdersView>
           height: double.infinity,
           width: double.infinity,
           child: TabBarView(children: [
-            CustomOrderPage(type: "Pending", color: Styles.appPrimaryColor),
-            CustomOrderPage(type: "Confirmed", color: Colors.lightGreen),
-            CustomOrderPage(type: "Cancelled", color: Colors.red)
+            CustomOrderPage(
+                type: "Pending", color: Styles.appPrimaryColor, theUID: MY_UID),
+            CustomOrderPage(
+                type: "Confirmed", color: Colors.lightGreen, theUID: MY_UID),
+            CustomOrderPage(
+                type: "Cancelled", color: Colors.red, theUID: MY_UID)
           ]),
         ),
         floatingActionButton: FloatingActionButton(

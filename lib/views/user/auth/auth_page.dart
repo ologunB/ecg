@@ -296,9 +296,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             .document(user.uid)
             .get()
             .then((document) {
-          //   var kEYS = snapshot.value.keys;
           var dATA = document.data;
-
           String type = dATA["Type"];
 
           String uid = type == "User" ? "Uid" : "Admin Uid";
@@ -334,10 +332,11 @@ class _LoginWidgetState extends State<LoginWidget> {
             );
           }
         }).catchError((ee) {
+          showToast("Login as Admin. You know how!", context);
+
           setState(() {
             isLoading = false;
           });
-          showToast(ee.toString(), context);
         });
       } else {
         setState(() {
