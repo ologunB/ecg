@@ -517,7 +517,15 @@ class _HomeViewState extends State<HomeView> {
                               ? Container(
                                   height: 100,
                                   width: 100,
-                                  child: Text("Empty"),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "No Recent",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 18),
+                                  ),
                                 )
                               : Container(
                                   child: ListView(

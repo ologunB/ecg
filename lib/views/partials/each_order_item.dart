@@ -1,6 +1,6 @@
 import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/utils/constants.dart';
-import 'package:ecgalpha/views/admin/orders/confirmed/order_details.dart';
+import 'package:ecgalpha/views/partials/order_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -72,7 +72,10 @@ class _EachOrderItemState extends State<EachOrderItem> {
               children: <Widget>[
                 Icon(Icons.label, color: color),
                 SizedBox(width: 10),
-                Text("ECG Admin",
+                Text(
+                    widget.type == "Pending"
+                        ? "--"
+                        : widget.investment.confirmedBy,
                     style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.w300,

@@ -1,8 +1,15 @@
+import 'package:ecgalpha/models/investment.dart';
+import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
-import 'package:ecgalpha/views/partials/custom_button.dart';
 import 'package:flutter/material.dart';
 
 class OrderDetails extends StatefulWidget {
+  final Investment investment;
+  final Color color;
+  final String type;
+
+  const OrderDetails({Key key, this.investment, this.color, this.type})
+      : super(key: key);
   @override
   _OrderDetailsState createState() => _OrderDetailsState();
 }
@@ -10,6 +17,8 @@ class OrderDetails extends StatefulWidget {
 class _OrderDetailsState extends State<OrderDetails> {
   @override
   Widget build(BuildContext context) {
+    double amount = double.parse(widget.investment.amount);
+
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
@@ -43,7 +52,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     backgroundColor: Colors.grey[100],
                   ),
                 ),
-                Text("Mercedes e450",
+                Text(MY_NAME,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 20,
@@ -56,49 +65,48 @@ class _OrderDetailsState extends State<OrderDetails> {
                         child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: Text(
-                        "Investment 1",
+                        widget.investment.id.substring(0, 10),
                         style: TextStyle(
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: FontWeight.w600,
                             color: Colors.black),
                       ),
                     )),
                     Icon(
                       Icons.payment,
-                      color: Colors.blue,
+                      color: widget.color,
                     ),
                     SizedBox(width: 10),
-                    Text("₦5000",
+                    Text("₦${commaFormat.format(amount)}",
                         style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w600,
                             color: Colors.black))
                   ],
                 ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.directions_boat),
-                          SizedBox(width: 10),
-                          Text(
-                            "ECG Admin",
-                            style: TextStyle(
-                                fontSize: 19,
-                                fontWeight: FontWeight.w300,
-                                color: Colors.black),
-                          ),
-                        ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.directions_boat),
+                      SizedBox(width: 10),
+                      Text(
+                        widget.type == "Pending"
+                            ? "--"
+                            : widget.investment.confirmedBy,
+                        style: TextStyle(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 Row(
                   children: <Widget>[
                     Icon(Icons.date_range),
                     SizedBox(width: 10),
-                    Text("16th April 2020 (8:45)",
+                    Text(widget.investment.date,
                         style: TextStyle(
                             fontSize: 19,
                             fontWeight: FontWeight.w300,
@@ -108,7 +116,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 Row(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      padding: const EdgeInsets.symmetric(vertical: 18.0),
                       child: Text(
                         "Transaction Details",
                         style: TextStyle(
@@ -151,7 +159,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       ),
                     ),
                     Text(
-                      "₦10,000",
+                      "₦${commaFormat.format(amount)}",
                       textAlign: TextAlign.right,
                       style: TextStyle(
                           fontSize: 20,
@@ -179,7 +187,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                         ),
                       ),
                       Text(
-                        "₦10,000",
+                        amount < 800000
+                            ? "₦${commaFormat.format((amount * 0.4).round())}"
+                            : "₦${commaFormat.format((amount * 0.3).round())}",
                         textAlign: TextAlign.right,
                         style: TextStyle(
                             fontSize: 20,
@@ -221,15 +231,17 @@ class _OrderDetailsState extends State<OrderDetails> {
                     children: <Widget>[
                       Expanded(
                         child: Text(
-                          "Referral / Bonus",
+                          "Total",
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 20,
                               color: Colors.black,
                               fontWeight: FontWeight.w500),
                         ),
                       ),
                       Text(
-                        "₦10,000",
+                        amount < 800000
+                            ? "₦${commaFormat.format((amount * 1.4).round())}"
+                            : "₦${commaFormat.format((amount * 1.3).round())}",
                         textAlign: TextAlign.right,
                         style: TextStyle(
                             fontSize: 20,
@@ -250,8 +262,28 @@ class _OrderDetailsState extends State<OrderDetails> {
         ],
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: CustomButton(title: "CONFIRMED", onPress: () {}),
+        padding: EdgeInsets.all(15.0),
+        child: Container(
+          padding: EdgeInsets.all(10.0),
+          decoration: BoxDecoration(
+            color: widget.color,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                widget.type,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

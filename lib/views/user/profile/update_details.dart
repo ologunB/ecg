@@ -223,11 +223,6 @@ class _PaymentMethodState extends State<UpdateBankDetails> {
                           .document(uu)
                           .updateData(m);
 
-                      rootRef
-                          .child("${widget.type} Collection")
-                          .child(uu)
-                          .update(m);
-
                       Future.delayed(Duration(milliseconds: 3000)).then((c) {
                         showToast("done", context);
                         setState(() {
@@ -245,7 +240,9 @@ class _PaymentMethodState extends State<UpdateBankDetails> {
                         if (widget.whereFrom == "login") {
                           Navigator.of(context).pushReplacement(
                             CupertinoPageRoute(
-                              builder: (context) => RegisterCompleteScreen(),
+                              builder: (context) => RegisterCompleteScreen(
+                                type: widget.type,
+                              ),
                             ),
                           );
                         }

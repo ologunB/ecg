@@ -131,7 +131,8 @@ class _PaymentMethodState extends State<CreateInvestment> {
                                 case ConnectionState.waiting:
                                   return Text("waiting");
                                 default:
-                                  if (snapshot.data.documents.isNotEmpty) {
+                                  if (snapshot.data.documents.isNotEmpty &&
+                                      accounts.isEmpty) {
                                     snapshot.data.documents.map((document) {
                                       Account item = Account.map(document);
                                       accounts.add(item);
@@ -370,8 +371,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
     mData.putIfAbsent("Name", () => MY_NAME);
     mData.putIfAbsent("Date", () => thePresentTime());
     mData.putIfAbsent("Amount", () => amount.text);
-    String t = selectedAccount.name + "__" + selectedAccount.bank;
-    mData.putIfAbsent("Account Paid", () => t);
+    mData.putIfAbsent("To Account ", () => selectedAccount.id);
     mData.putIfAbsent("Uid", () => MY_UID);
     mData.putIfAbsent("Timestamp", () => DateTime.now().millisecondsSinceEpoch);
     mData.putIfAbsent("id", () => rnd);
@@ -394,7 +394,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
           .document(thePresentTime())
           .collection("Transactions")
           .document("Pending")
-          .collection(MY_UID)
+          .collection(selectedAccount.id)
           .document(rnd)
           .setData(mData);
 

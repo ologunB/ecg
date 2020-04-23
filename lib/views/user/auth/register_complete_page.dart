@@ -1,11 +1,15 @@
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/views/admin/admin_layout_template.dart';
 import 'package:ecgalpha/views/user/partials/layout_template.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterCompleteScreen extends StatefulWidget {
+  final String type;
+
+  RegisterCompleteScreen({Key key, @required this.type}) : super(key: key);
   @override
   _RegisterCompleteScreenState createState() => _RegisterCompleteScreenState();
 }
@@ -40,10 +44,17 @@ class _RegisterCompleteScreenState extends State<RegisterCompleteScreen> {
       return (prefs.getString('image') ?? "image");
     });
 
-    Future.delayed(Duration(milliseconds: 5000)).then((c) {
-      Navigator.of(context).pushReplacement(CupertinoPageRoute(
-          builder: (context) => LayoutTemplate(pageSelectedIndex: 0)));
-    });
+    if (widget.type == "User") {
+      Future.delayed(Duration(milliseconds: 5000)).then((c) {
+        Navigator.of(context).pushReplacement(CupertinoPageRoute(
+            builder: (context) => LayoutTemplate(pageSelectedIndex: 0)));
+      });
+    } else if (widget.type == "Admin") {
+      Future.delayed(Duration(milliseconds: 5000)).then((c) {
+        Navigator.of(context).pushReplacement(
+            CupertinoPageRoute(builder: (context) => AdminLayoutTemplate()));
+      });
+    }
 
     doAssign();
   }
@@ -63,8 +74,13 @@ class _RegisterCompleteScreenState extends State<RegisterCompleteScreen> {
     return Scaffold(
       body: InkWell(
         onTap: () {
-          Navigator.of(context).pushReplacement(
-              CupertinoPageRoute(builder: (context) => LayoutTemplate()));
+          if (widget.type == "User") {
+            Navigator.of(context).pushReplacement(
+                CupertinoPageRoute(builder: (context) => LayoutTemplate()));
+          } else if (widget.type == "Admin") {
+            Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                builder: (context) => AdminLayoutTemplate()));
+          }
         },
         child: Container(
           padding: EdgeInsets.all(20),
