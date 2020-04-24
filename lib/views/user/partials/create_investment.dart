@@ -405,6 +405,14 @@ class _PaymentMethodState extends State<CreateInvestment> {
           .document(rnd)
           .setData(mData)
           .then((val) {
+        Firestore.instance
+            .collection("Admin")
+            .document(presentDate())
+            .collection("Transactions")
+            .document("Confirmed")
+            .collection(selectedAccount.uid)
+            .document(MY_UID)
+            .setData({"Amount": "0"});
         _setState(() {
           isLoading = true;
         });

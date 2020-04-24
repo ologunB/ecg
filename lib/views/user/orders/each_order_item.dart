@@ -73,9 +73,9 @@ class _EachOrderItemState extends State<EachOrderItem> {
                 Icon(Icons.label, color: color),
                 SizedBox(width: 10),
                 Text(
-                    widget.type == "Confirmed"
-                        ? widget.investment.confirmedBy
-                        : "--",
+                    widget.type == "Pending"
+                        ? "--"
+                        : widget.investment.confirmedBy,
                     style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.w300,

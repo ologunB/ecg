@@ -70,8 +70,8 @@ class _OrdersViewState extends State<OrdersView>
           width: double.infinity,
           child: TabBarView(children: [
             CustomOrderPage(color: Styles.appPrimaryColor, type: "Pending"),
-            CustomOrderPage(color: Styles.appPrimaryColor, type: "Confirmed"),
-            CustomOrderPage(color: Styles.appPrimaryColor, type: "Cancelled"),
+            CustomOrderPage(color: Colors.green, type: "Confirmed"),
+            CustomOrderPage(color: Colors.red, type: "Cancelled"),
           ]),
         ),
       ),

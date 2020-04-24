@@ -77,216 +77,213 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
               padding: EdgeInsets.only(left: 8, right: 8, top: 8),
               child: Divider(),
             ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: FlatButton(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (_) {
-                              return StatefulBuilder(
-                                builder: (context, _setState) {
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(25.0),
-                                      ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <
+                Widget>[
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: FlatButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (_) {
+                          return StatefulBuilder(
+                            builder: (context, _setState) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(25.0),
+                                  ),
+                                ),
+                                child: AlertDialog(
+                                  title: Center(
+                                    child: Text(
+                                      isLoading
+                                          ? "Processing"
+                                          : "Do you want to cancel the order?",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                    child: AlertDialog(
-                                      title: Center(
+                                  ),
+                                  content: Container(
+                                    height: 0,
+                                    width: 0,
+                                    child: isLoading
+                                        ? Container(
+                                            alignment: Alignment.center,
+                                            height: 100,
+                                            width: 100,
+                                            child: CircularProgressIndicator())
+                                        : Container(),
+                                  ),
+                                  actions: <Widget>[
+                                    InkWell(
+                                      onTap: isLoading
+                                          ? null
+                                          : () {
+                                              Navigator.pop(context);
+                                            },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          isLoading
-                                              ? "Processing"
-                                              : "Do you want to cancel the order?",
-                                          textAlign: TextAlign.center,
+                                          isLoading ? "" : "CANCEL",
                                           style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold),
+                                              color: Colors.grey,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w400),
                                         ),
                                       ),
-                                      content: Container(
-                                        child: isLoading
-                                            ? Container(
-                                                alignment: Alignment.center,
-                                                height: 100,
-                                                width: 100,
-                                                child:
-                                                    CircularProgressIndicator())
-                                            : Container(),
-                                      ),
-                                      actions: <Widget>[
-                                        InkWell(
-                                          onTap: isLoading
-                                              ? null
-                                              : () {
-                                                  Navigator.pop(context);
-                                                },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              isLoading ? "" : "CANCEL",
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: isLoading
-                                              ? null
-                                              : () {
-                                                  processOrder(
-                                                      widget.investment,
-                                                      _setState,
-                                                      "Cancelled");
-                                                },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              isLoading ? "" : "YES",
-                                              style: TextStyle(
-                                                  color: Styles.appPrimaryColor,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        )
-                                      ],
                                     ),
-                                  );
-                                },
-                              );
-                            });
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "CANCEL",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Styles.appPrimaryColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: FlatButton(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (_) {
-                              return StatefulBuilder(
-                                builder: (context, _setState) {
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(25.0),
-                                      ),
-                                    ),
-                                    child: AlertDialog(
-                                      title: Center(
+                                    InkWell(
+                                      onTap: isLoading
+                                          ? null
+                                          : () {
+                                              cancelOrder(
+                                                  widget.investment, _setState);
+                                            },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          isLoading
-                                              ? "Processing"
-                                              : "Do you want to confirm the order?",
-                                          textAlign: TextAlign.center,
+                                          isLoading ? "" : "YES",
                                           style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold),
+                                              color: Styles.appPrimaryColor,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w400),
                                         ),
                                       ),
-                                      content: Container(
-                                        child: isLoading
-                                            ? Container(
-                                                alignment: Alignment.center,
-                                                height: 100,
-                                                width: 100,
-                                                child:
-                                                    CircularProgressIndicator())
-                                            : Container(),
-                                      ),
-                                      actions: <Widget>[
-                                        InkWell(
-                                          onTap: isLoading
-                                              ? null
-                                              : () {
-                                                  Navigator.pop(context);
-                                                },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              isLoading ? "" : "CANCEL",
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: isLoading
-                                              ? null
-                                              : () {
-                                                  processOrder(
-                                                      widget.investment,
-                                                      _setState,
-                                                      "Confirmed");
-                                                },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              isLoading ? "" : "YES",
-                                              style: TextStyle(
-                                                  color: Styles.appPrimaryColor,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
+                                    )
+                                  ],
+                                ),
                               );
-                            });
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "CONFIRM",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white),
-                          )
-                        ],
-                      ),
-                    ),
+                            },
+                          );
+                        });
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "CANCEL",
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white),
+                      )
+                    ],
                   ),
-                ]),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Styles.appPrimaryColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: FlatButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (_) {
+                          return StatefulBuilder(
+                            builder: (context, _setState) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(25.0),
+                                  ),
+                                ),
+                                child: AlertDialog(
+                                  title: Center(
+                                    child: Text(
+                                      isLoading
+                                          ? "Processing"
+                                          : "Do you want to confirm the order?",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  content: Container(
+                                    height: 0,
+                                    width: 0,
+                                    child: isLoading
+                                        ? Container(
+                                            alignment: Alignment.center,
+                                            height: 100,
+                                            width: 100,
+                                            child: CircularProgressIndicator())
+                                        : Container(),
+                                  ),
+                                  actions: <Widget>[
+                                    InkWell(
+                                      onTap: isLoading
+                                          ? null
+                                          : () {
+                                              Navigator.pop(context);
+                                            },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          isLoading ? "" : "CANCEL",
+                                          style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: isLoading
+                                          ? null
+                                          : () {
+                                              processOrder(
+                                                  widget.investment, _setState);
+                                            },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          isLoading ? "" : "YES",
+                                          style: TextStyle(
+                                              color: Styles.appPrimaryColor,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        });
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "CONFIRM",
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ]),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Divider(
@@ -300,7 +297,11 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
     );
   }
 
-  void processOrder(Investment item, _setState, String type) {
+  void processOrder(Investment item, _setState) {
+    _setState(() {
+      isLoading = true;
+    });
+
     Firestore.instance
         .collection("Admin")
         .document(item.date)
@@ -310,19 +311,21 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
         .document(item.userUid)
         .get()
         .then((document) {
-      var docs = document.data;
-
-      String amount = docs["Amount"] == null ? "0" : docs["Amount"];
+      String amount;
+      if (document == null) {
+        amount = "0";
+      } else {
+        amount = document.data["Amount"];
+      }
 
       double newAmount = double.parse(item.amount) + double.parse(amount);
 
       Map<String, Object> adminData = Map();
       adminData.putIfAbsent("Name", () => item.name);
       adminData.putIfAbsent("Date", () => item.date);
-
       adminData.putIfAbsent("Amount", () => newAmount.floor().toString());
-      adminData.putIfAbsent("To Account ", () => MY_UID);
-      adminData.putIfAbsent("Uid", () => MY_UID);
+      adminData.putIfAbsent("userUid", () => item.userUid);
+      adminData.putIfAbsent("adminUid", () => item.adminUid);
       adminData.putIfAbsent(
           "Timestamp", () => DateTime.now().millisecondsSinceEpoch);
       adminData.putIfAbsent("id", () => item.id);
@@ -333,62 +336,121 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
       userData.putIfAbsent("Date", () => item.date);
 
       userData.putIfAbsent("Amount", () => item.amount);
-      userData.putIfAbsent("To Account ", () => MY_UID);
-      userData.putIfAbsent("userID", () => MY_UID);
-      userData.putIfAbsent("adminID", () => MY_UID);
+      userData.putIfAbsent("userUid", () => item.userUid);
+      userData.putIfAbsent("adminUid", () => item.adminUid);
       userData.putIfAbsent(
           "Timestamp", () => DateTime.now().millisecondsSinceEpoch);
       userData.putIfAbsent("id", () => item.id);
       userData.putIfAbsent("Confirmed By", () => MY_NAME);
 
-      _setState(() {
-        isLoading = true;
-      });
-
       Firestore.instance
-          .collection("Transactions")
-          .document("Expecting")
-          .collection(MY_UID)
-          .document(item.date)
-          .setData(adminData);
-
-      Firestore.instance
-          .collection("Admin")
-          .document(item.date)
           .collection("Transactions")
           .document("Confirmed")
-          .collection(MY_UID)
-          .document(item.userUid)
-          .setData(adminData)
-          .then((a) {
+          .collection(item.userUid)
+          .document(item.id)
+          .setData(userData)
+          .then((val) {
+        showToast("1", context);
+
         Firestore.instance
+            .collection("Admin")
+            .document(item.date)
             .collection("Transactions")
-            .document(type)
+            .document("Confirmed")
             .collection(MY_UID)
-            .document(item.id)
-            .setData(userData)
+            .document(item.userUid)
+            .setData(adminData)
             .then((a) {
           Firestore.instance
-              .collection("Admin")
+              .collection("Transactions")
+              .document("Expecting")
+              .collection(item.userUid)
               .document(item.date)
-              .collection("Transactions")
-              .document("Pending")
-              .collection(MY_UID)
-              .document(item.id)
-              .delete();
-          Firestore.instance
-              .collection("Transactions")
-              .document("Pending")
-              .collection(MY_UID)
-              .document(item.id)
-              .delete();
-
-          _setState(() {
-            isLoading = false;
+              .setData(adminData)
+              .then((a) {
+            Firestore.instance
+                .collection("Admin")
+                .document(item.date)
+                .collection("Transactions")
+                .document("Pending")
+                .collection(MY_UID)
+                .document(item.id)
+                .delete()
+                .then((a) {
+              Firestore.instance
+                  .collection("Transactions")
+                  .document("Pending")
+                  .collection(item.userUid)
+                  .document(item.id)
+                  .delete()
+                  .then((a) {
+                _setState(() {
+                  isLoading = false;
+                });
+                Navigator.pop(context);
+                showToast("Order has been Confirmed ", context);
+              });
+            });
           });
-          Navigator.pop(context);
-          showToast("Order has been $type", context);
         });
+      });
+    }).catchError((e) {
+      showToast(e, context);
+    });
+  }
+
+  void cancelOrder(Investment item, _setState) {
+    Map<String, Object> userData = Map();
+    userData.putIfAbsent("Name", () => item.name);
+    userData.putIfAbsent("Date", () => item.date);
+    userData.putIfAbsent("Amount", () => item.amount);
+    userData.putIfAbsent("userUid", () => item.userUid);
+    userData.putIfAbsent("adminUid", () => item.adminUid);
+    userData.putIfAbsent(
+        "Timestamp", () => DateTime.now().millisecondsSinceEpoch);
+    userData.putIfAbsent("id", () => item.id);
+    userData.putIfAbsent("Confirmed By", () => MY_NAME);
+
+    _setState(() {
+      isLoading = true;
+    });
+
+    Firestore.instance
+        .collection("Admin")
+        .document(item.date)
+        .collection("Transactions")
+        .document("Cancelled")
+        .collection(MY_UID)
+        .document(item.userUid)
+        .setData(userData)
+        .then((a) {
+      Firestore.instance
+          .collection("Transactions")
+          .document('Cancelled')
+          .collection(item.userUid)
+          .document(item.id)
+          .setData(userData)
+          .then((a) {
+        Firestore.instance
+            .collection("Admin")
+            .document(item.date)
+            .collection("Transactions")
+            .document("Pending")
+            .collection(item.adminUid)
+            .document(item.id)
+            .delete();
+        Firestore.instance
+            .collection("Transactions")
+            .document("Pending")
+            .collection(item.userUid)
+            .document(item.id)
+            .delete();
+
+        _setState(() {
+          isLoading = false;
+        });
+        Navigator.pop(context);
+        showToast("Order has been Cancelled", context);
       });
     });
   }

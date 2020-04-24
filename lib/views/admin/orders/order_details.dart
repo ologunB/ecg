@@ -116,7 +116,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       Icon(Icons.directions_boat),
                       SizedBox(width: 10),
                       Text(
-                        widget.type == "Cancelled"
+                        widget.type == "Pending"
                             ? "--"
                             : widget.investment.confirmedBy,
                         style: TextStyle(
