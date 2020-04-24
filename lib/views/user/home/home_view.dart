@@ -8,6 +8,7 @@ import 'package:ecgalpha/views/user/orders/each_order_item.dart';
 import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'expecting_page.dart';
 import 'notification_page.dart';
@@ -19,7 +20,9 @@ class HomeView extends StatefulWidget {
   _HomeViewState createState() => _HomeViewState();
 }
 
-Widget middleItem(String type, String amount, String time) => Padding(
+List<Investment> expectingList = [];
+
+Widget middleItem(String type, String amount, String time, context) => Padding(
       padding: EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
@@ -32,7 +35,16 @@ Widget middleItem(String type, String amount, String time) => Padding(
           ),
         ),
         child: FlatButton(
-          onPressed: () {},
+          onPressed: type == "Expecting"
+              ? () {
+                  Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => ExpectingPage(
+                                items: expectingList,
+                              )));
+                }
+              : null,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,15 +95,56 @@ Widget middleItem(String type, String amount, String time) => Padding(
 
 class _HomeViewState extends State<HomeView> {
   int totalExpecting = 0;
-  String expectingTime;
+  String expectingTime = "";
   int todayPending = 0;
-  String todayPendingTime;
+  String todayPendingTime = "";
   int todayConfirmed = 0;
-  String todayConfirmedTime;
+  String todayConfirmedTime = "";
   int totalPending = 0;
-  String totalPendingTime;
+  String totalPendingTime = "";
   int totalConfirmed = 0;
-  String totalConfirmedTime;
+  String totalConfirmedTime = "";
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  Future<String> uid, email, name, type, bName, aName, bNum, image;
+
+  @override
+  void initState() {
+    super.initState();
+
+    uid = _prefs.then((prefs) {
+      return (prefs.getString('uid') ?? "customerUID");
+    });
+    email = _prefs.then((prefs) {
+      return (prefs.getString('email') ?? "customerEmail");
+    });
+    name = _prefs.then((prefs) {
+      return (prefs.getString('name') ?? "customerName");
+    });
+    bName = _prefs.then((prefs) {
+      return (prefs.getString('Bank Name') ?? "bankName");
+    });
+    aName = _prefs.then((prefs) {
+      return (prefs.getString('Account Name') ?? "accName");
+    });
+    bNum = _prefs.then((prefs) {
+      return (prefs.getString('Account Number') ?? "accNum");
+    });
+    image = _prefs.then((prefs) {
+      return (prefs.getString('image') ?? "image");
+    });
+
+    doAssign();
+  }
+
+  void doAssign() async {
+    MY_NAME = await name;
+    MY_UID = await uid;
+    MY_EMAIL = await email;
+    MY_ACCOUNT_NUMBER = await bNum;
+    MY_BANK_ACCOUNT_NAME = await aName;
+    MY_BANK_NAME = await bName;
+    MY_IMAGE = await image;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -230,63 +283,10 @@ class _HomeViewState extends State<HomeView> {
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) => ExpectingPage()));
-                      },
-                      child: StreamBuilder<QuerySnapshot>(
-                        stream: Firestore.instance
-                            .collection("Transactions")
-                            .document("Expecting")
-                            .collection(MY_UID)
-                            .orderBy("Timestamp", descending: true)
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.waiting:
-                              return Container(
-                                alignment: Alignment.center,
-                                child: CircularProgressIndicator(),
-                                height: 100,
-                                width: 100,
-                              );
-                            default:
-                              int i = 0;
-                              if (snapshot.data.documents.isNotEmpty) {
-                                snapshot.data.documents.map((document) {
-                                  Investment item = Investment.map(document);
-                                  if (i == 0) {
-                                    expectingTime = timeAgo(
-                                        DateTime.fromMillisecondsSinceEpoch(
-                                            item.timeStamp));
-                                  }
-                                  i++;
-
-                                  totalExpecting =
-                                      totalExpecting + int.parse(item.amount);
-                                }).toList();
-                              }
-                              return snapshot.data.documents.isEmpty
-                                  ? Container(
-                                      child: middleItem("Expecting", "0", "--"),
-                                    )
-                                  : Container(
-                                      child: middleItem(
-                                          "Expecting",
-                                          commaFormat.format(totalExpecting),
-                                          expectingTime),
-                                    );
-                          }
-                        },
-                      ),
-                    ),
                     StreamBuilder<QuerySnapshot>(
                       stream: Firestore.instance
                           .collection("Transactions")
-                          .document("Pending")
+                          .document("Expecting")
                           .collection(MY_UID)
                           .orderBy("Timestamp", descending: true)
                           .snapshots(),
@@ -302,6 +302,58 @@ class _HomeViewState extends State<HomeView> {
                           default:
                             int i = 0;
                             if (snapshot.data.documents.isNotEmpty) {
+                              totalExpecting = 0;
+                              expectingList.clear();
+                              snapshot.data.documents.map((document) {
+                                Investment item = Investment.map(document);
+                                expectingList.add(item);
+                                if (i == 0) {
+                                  expectingTime = timeAgo(
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          item.timeStamp));
+                                }
+                                i++;
+
+                                totalExpecting =
+                                    totalExpecting + int.parse(item.amount);
+                              }).toList();
+                            }
+                            return snapshot.data.documents.isEmpty
+                                ? Container(
+                                    child: middleItem(
+                                        "Expecting", "0", "--", context),
+                                  )
+                                : Container(
+                                    child: middleItem(
+                                        "Expecting",
+                                        commaFormat.format(totalExpecting),
+                                        expectingTime,
+                                        context),
+                                  );
+                        }
+                      },
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: Firestore.instance
+                          .collection("Transactions")
+                          .document("Pending")
+                          .collection(MY_UID)
+                          .limit(20)
+                          .orderBy("Timestamp", descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Container(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(),
+                              height: 100,
+                              width: 100,
+                            );
+                          default:
+                            int i = 0;
+                            if (snapshot.data.documents.isNotEmpty) {
+                              todayPending = 0;
                               snapshot.data.documents.map((document) {
                                 Investment item = Investment.map(document);
                                 if (i == 0) {
@@ -311,21 +363,23 @@ class _HomeViewState extends State<HomeView> {
                                 }
                                 i++;
 
-                                snapshot.data.documents.length;
-                                todayPending =
-                                    todayPending + int.parse(item.amount);
+                                if (item.date == presentDate()) {
+                                  todayPending =
+                                      todayPending + int.parse(item.amount);
+                                }
                               }).toList();
                             }
                             return snapshot.data.documents.isEmpty
                                 ? Container(
                                     child: middleItem(
-                                        "Today's Pending", "0", "--"),
+                                        "Today's Pending", "0", "--", context),
                                   )
                                 : Container(
                                     child: middleItem(
                                         "Today's Pending",
                                         commaFormat.format(todayPending),
-                                        todayPendingTime),
+                                        todayPendingTime,
+                                        context),
                                   );
                         }
                       },
@@ -335,6 +389,7 @@ class _HomeViewState extends State<HomeView> {
                           .collection("Transactions")
                           .document("Confirmed")
                           .collection(MY_UID)
+                          .limit(20)
                           .orderBy("Timestamp", descending: true)
                           .snapshots(),
                       builder: (context, snapshot) {
@@ -349,6 +404,7 @@ class _HomeViewState extends State<HomeView> {
                           default:
                             int i = 0;
                             if (snapshot.data.documents.isNotEmpty) {
+                              todayConfirmed = 0;
                               snapshot.data.documents.map((document) {
                                 Investment item = Investment.map(document);
                                 if (i == 0) {
@@ -358,21 +414,23 @@ class _HomeViewState extends State<HomeView> {
                                 }
                                 i++;
 
-                                snapshot.data.documents.length;
-                                todayConfirmed =
-                                    todayConfirmed + int.parse(item.amount);
+                                if (item.date == presentDate()) {
+                                  todayConfirmed =
+                                      todayConfirmed + int.parse(item.amount);
+                                }
                               }).toList();
                             }
                             return snapshot.data.documents.isEmpty
                                 ? Container(
-                                    child: middleItem(
-                                        "Today's Confirmed", "0", "--"),
+                                    child: middleItem("Today's Confirmed", "0",
+                                        "--", context),
                                   )
                                 : Container(
                                     child: middleItem(
                                         "Today's Confirmed",
                                         commaFormat.format(todayConfirmed),
-                                        todayConfirmedTime),
+                                        todayConfirmedTime,
+                                        context),
                                   );
                         }
                       },
@@ -396,6 +454,7 @@ class _HomeViewState extends State<HomeView> {
                           default:
                             int i = 0;
                             if (snapshot.data.documents.isNotEmpty) {
+                              totalPending = 0;
                               snapshot.data.documents.map((document) {
                                 Investment item = Investment.map(document);
                                 if (i == 0) {
@@ -405,21 +464,21 @@ class _HomeViewState extends State<HomeView> {
                                 }
                                 i++;
 
-                                snapshot.data.documents.length;
                                 totalPending =
                                     totalPending + int.parse(item.amount);
                               }).toList();
                             }
                             return snapshot.data.documents.isEmpty
                                 ? Container(
-                                    child:
-                                        middleItem("Total Pending", "0", "--"),
+                                    child: middleItem(
+                                        "Total Pending", "0", "--", context),
                                   )
                                 : Container(
                                     child: middleItem(
                                         "Total Pending",
                                         commaFormat.format(totalPending),
-                                        totalPendingTime),
+                                        totalPendingTime,
+                                        context),
                                   );
                         }
                       },
@@ -443,6 +502,7 @@ class _HomeViewState extends State<HomeView> {
                           default:
                             int i = 0;
                             if (snapshot.data.documents.isNotEmpty) {
+                              totalConfirmed = 0;
                               snapshot.data.documents.map((document) {
                                 Investment item = Investment.map(document);
                                 if (i == 0) {
@@ -459,13 +519,14 @@ class _HomeViewState extends State<HomeView> {
                             return snapshot.data.documents.isEmpty
                                 ? Container(
                                     child: middleItem(
-                                        "Total Confirmed", "0", "--"),
+                                        "Total Confirmed", "0", "--", context),
                                   )
                                 : Container(
                                     child: middleItem(
                                         "Total Confirmed",
-                                        commaFormat.format(totalPending),
-                                        totalConfirmedTime),
+                                        commaFormat.format(totalConfirmed),
+                                        totalConfirmedTime,
+                                        context),
                                   );
                         }
                       },
