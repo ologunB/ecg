@@ -1,6 +1,6 @@
 import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/utils/constants.dart';
-import 'package:ecgalpha/views/partials/order_details.dart';
+import 'package:ecgalpha/views/user/orders/order_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

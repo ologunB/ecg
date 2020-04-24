@@ -4,7 +4,7 @@ import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/utils/carousel_slider.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
-import 'package:ecgalpha/views/partials/each_order_item.dart';
+import 'package:ecgalpha/views/user/orders/each_order_item.dart';
 import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

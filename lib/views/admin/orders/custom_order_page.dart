@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/utils/constants.dart';
-import 'package:ecgalpha/views/partials/each_order_item.dart';
+import 'package:ecgalpha/views/admin/orders/each_order_item.dart';
+import 'package:ecgalpha/views/admin/orders/pending_order_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -119,11 +120,16 @@ class _ListViewNoteState extends State<CustomOrderPage>
                       )
                     : ListView(
                         children: snapshot.data.documents.map((document) {
-                          return EachOrderItem(
-                            investment: Investment.map(document),
-                            color: widget.color,
-                            type: widget.type,
-                          );
+                          return widget.type == "Pending"
+                              ? PendingOrderItem(
+                                  investment: Investment.map(document),
+                                  color: widget.color,
+                                  type: "Pending")
+                              : EachOrderItem(
+                                  investment: Investment.map(document),
+                                  color: widget.color,
+                                  type: widget.type,
+                                );
                         }).toList(),
                       );
             }

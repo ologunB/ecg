@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/views/partials/custom_button.dart';
-import 'package:ecgalpha/views/partials/each_order_item.dart';
+import 'package:ecgalpha/views/user/orders/each_order_item.dart';
 import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
