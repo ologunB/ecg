@@ -47,7 +47,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 StreamBuilder(
                     stream: Firestore.instance
                         .collection("User Collection")
-                        .document(widget.investment.uid)
+                        .document(widget.investment.userUid)
                         .snapshots(),
                     builder: (context, snapshot) {
                       return ClipRRect(
@@ -116,7 +116,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                       Icon(Icons.directions_boat),
                       SizedBox(width: 10),
                       Text(
-                        widget.type == "Pending"
+                        widget.type == "Cancelled"
                             ? "--"
                             : widget.investment.confirmedBy,
                         style: TextStyle(

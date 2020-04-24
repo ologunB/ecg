@@ -2,15 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/views/admin/orders/each_order_item.dart';
-import 'package:ecgalpha/views/admin/orders/pending_order_item.dart';
+import 'package:ecgalpha/views/admin/payout/pending_payout_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CustomOrderPage extends StatefulWidget {
+class CustomPayoutPage extends StatefulWidget {
   final String type;
   final Color color;
 
-  const CustomOrderPage({
+  const CustomPayoutPage({
     Key key,
     @required this.type,
     @required this.color,
@@ -19,7 +19,7 @@ class CustomOrderPage extends StatefulWidget {
   _ListViewNoteState createState() => _ListViewNoteState();
 }
 
-class _ListViewNoteState extends State<CustomOrderPage>
+class _ListViewNoteState extends State<CustomPayoutPage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -120,11 +120,11 @@ class _ListViewNoteState extends State<CustomOrderPage>
                       )
                     : ListView(
                         children: snapshot.data.documents.map((document) {
-                          return widget.type == "Pending"
-                              ? PendingOrderItem(
+                          return widget.type == "Confirmed"
+                              ? PendingPayoutItem(
                                   investment: Investment.map(document),
                                   color: widget.color,
-                                  type: "Pending")
+                                  type: "Confirmed")
                               : EachOrderItem(
                                   investment: Investment.map(document),
                                   color: widget.color,

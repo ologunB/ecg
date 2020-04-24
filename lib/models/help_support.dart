@@ -1,5 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
-
 class Support {
   String _id;
   String _pop;
@@ -16,15 +14,6 @@ class Support {
   String get category => _category;
   String get date => _date;
   String get id => _id;
-
-  Support.fromSnapshot(DataSnapshot snapshot) {
-    _id = snapshot.key;
-    _pop = snapshot.value['POP'];
-    _date = snapshot.value['Date'];
-    _title = snapshot.value['Title'];
-    _desc = snapshot.value['Description'];
-    _category = snapshot.value['Category'];
-  }
 
   Support.map(dynamic obj) {
     this._id = obj["id"];

@@ -1,6 +1,7 @@
 class Investment {
   String _id;
-  String _uid;
+  String _adminUid;
+  String _userUid;
   String _amount;
   String _name;
   String _date;
@@ -11,17 +12,19 @@ class Investment {
   String get date => _date;
   String get confirmedBy => _confirmedBy;
   String get id => _id;
-  String get uid => _uid;
+  String get userUid => _userUid;
+  String get adminUid => _adminUid;
   String get amount => _amount;
   int get timeStamp => _timeStamp;
 
   Investment(this._id, this._date, this._amount, this._timeStamp,
-      this._confirmedBy, this._name, this._uid);
+      this._confirmedBy, this._name, this._adminUid, this._userUid);
 
   Investment.map(dynamic obj) {
     this._name = obj["Name"];
     this._id = obj["id"];
-    this._uid = obj["Uid"];
+    this._userUid = obj["userUid"];
+    this._adminUid = obj["adminUid"];
     this._amount = obj['Amount'];
     this._date = obj['Date'];
     this._confirmedBy = obj['Confirmed By'];

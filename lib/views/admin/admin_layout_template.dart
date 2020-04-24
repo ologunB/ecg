@@ -1,6 +1,7 @@
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/admin/orders/order_view.dart';
 import 'package:ecgalpha/views/admin/settings/settings_page.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,8 +22,11 @@ class _AdminLayoutTemplateState extends State<AdminLayoutTemplate> {
     OrdersView(
       key: PageStorageKey('Page2'),
     ),
-    SettingsView(
+    OrdersView(
       key: PageStorageKey('Page3'),
+    ),
+    SettingsView(
+      key: PageStorageKey('Page4'),
     )
   ];
 
@@ -48,18 +52,23 @@ class _AdminLayoutTemplateState extends State<AdminLayoutTemplate> {
           showUnselectedLabels: true,
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.home),
+                icon: Icon(EvaIcons.home),
                 title: Text(
                   "Home",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                 )),
             BottomNavigationBarItem(
-                icon: Icon(Icons.payment),
+                icon: Icon(EvaIcons.creditCard),
                 title: Text("Investments",
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.w500))),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
+                icon: Icon(EvaIcons.briefcase),
+                title: Text("Payouts",
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.w500))),
+            BottomNavigationBarItem(
+                icon: Icon(EvaIcons.settings),
                 title: Text("Settings",
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.w500))),

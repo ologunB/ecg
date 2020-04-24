@@ -6,12 +6,12 @@ import 'package:ecgalpha/views/admin/orders/order_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class PendingOrderItem extends StatefulWidget {
+class PendingPayoutItem extends StatefulWidget {
   final Investment investment;
   final Color color;
   final String type;
 
-  const PendingOrderItem(
+  const PendingPayoutItem(
       {Key key,
       @required this.investment,
       @required this.color,
@@ -19,10 +19,10 @@ class PendingOrderItem extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PendingOrderItemState createState() => _PendingOrderItemState();
+  _PendingPayoutItemState createState() => _PendingPayoutItemState();
 }
 
-class _PendingOrderItemState extends State<PendingOrderItem> {
+class _PendingPayoutItemState extends State<PendingPayoutItem> {
   @override
   Widget build(BuildContext context) {
     Color color = widget.color;
@@ -80,6 +80,7 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+/*
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.red,
@@ -183,6 +184,7 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
                       ),
                     ),
                   ),
+*/
                   Container(
                     decoration: BoxDecoration(
                       color: Styles.appPrimaryColor,
@@ -207,7 +209,7 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
                                         child: Text(
                                           isLoading
                                               ? "Processing"
-                                              : "Do you want to confirm the order?",
+                                              : "Are you sure you have paid him?",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               color: Colors.black,
@@ -248,9 +250,9 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
                                               ? null
                                               : () {
                                                   processOrder(
-                                                      widget.investment,
-                                                      _setState,
-                                                      "Confirmed");
+                                                    widget.investment,
+                                                    _setState,
+                                                  );
                                                 },
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
@@ -300,96 +302,43 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
     );
   }
 
-  void processOrder(Investment item, _setState, String type) {
+  void processOrder(Investment item, _setState) {
+    Map<String, Object> mData = Map();
+    mData.putIfAbsent("Name", () => item.name);
+    mData.putIfAbsent("Date", () => item.date);
+    mData.putIfAbsent("Amount", () => item.amount);
+    mData.putIfAbsent("To Account ", () => MY_UID);
+    mData.putIfAbsent("Uid", () => MY_UID);
+    mData.putIfAbsent("Timestamp", () => DateTime.now().millisecondsSinceEpoch);
+    mData.putIfAbsent("id", () => item.id);
+    mData.putIfAbsent("Confirmed By", () => MY_NAME);
+
+    _setState(() {
+      isLoading = true;
+    });
+
     Firestore.instance
         .collection("Admin")
         .document(item.date)
         .collection("Transactions")
-        .document("Confirmed")
+        .document("Paid")
         .collection(MY_UID)
-        .document(item.userUid)
-        .get()
-        .then((document) {
-      var docs = document.data;
-
-      String amount = docs["Amount"] == null ? "0" : docs["Amount"];
-
-      double newAmount = double.parse(item.amount) + double.parse(amount);
-
-      Map<String, Object> adminData = Map();
-      adminData.putIfAbsent("Name", () => item.name);
-      adminData.putIfAbsent("Date", () => item.date);
-
-      adminData.putIfAbsent("Amount", () => newAmount.floor().toString());
-      adminData.putIfAbsent("To Account ", () => MY_UID);
-      adminData.putIfAbsent("Uid", () => MY_UID);
-      adminData.putIfAbsent(
-          "Timestamp", () => DateTime.now().millisecondsSinceEpoch);
-      adminData.putIfAbsent("id", () => item.id);
-      adminData.putIfAbsent("Confirmed By", () => MY_NAME);
-
-      Map<String, Object> userData = Map();
-      userData.putIfAbsent("Name", () => item.name);
-      userData.putIfAbsent("Date", () => item.date);
-
-      userData.putIfAbsent("Amount", () => item.amount);
-      userData.putIfAbsent("To Account ", () => MY_UID);
-      userData.putIfAbsent("userID", () => MY_UID);
-      userData.putIfAbsent("adminID", () => MY_UID);
-      userData.putIfAbsent(
-          "Timestamp", () => DateTime.now().millisecondsSinceEpoch);
-      userData.putIfAbsent("id", () => item.id);
-      userData.putIfAbsent("Confirmed By", () => MY_NAME);
-
-      _setState(() {
-        isLoading = true;
-      });
-
-      Firestore.instance
-          .collection("Transactions")
-          .document("Expecting")
-          .collection(MY_UID)
-          .document(item.date)
-          .setData(adminData);
-
+        .document(item.id)
+        .setData(mData)
+        .then((a) {
       Firestore.instance
           .collection("Admin")
           .document(item.date)
           .collection("Transactions")
           .document("Confirmed")
           .collection(MY_UID)
-          .document(item.userUid)
-          .setData(adminData)
-          .then((a) {
-        Firestore.instance
-            .collection("Transactions")
-            .document(type)
-            .collection(MY_UID)
-            .document(item.id)
-            .setData(userData)
-            .then((a) {
-          Firestore.instance
-              .collection("Admin")
-              .document(item.date)
-              .collection("Transactions")
-              .document("Pending")
-              .collection(MY_UID)
-              .document(item.id)
-              .delete();
-          Firestore.instance
-              .collection("Transactions")
-              .document("Pending")
-              .collection(MY_UID)
-              .document(item.id)
-              .delete();
-
-          _setState(() {
-            isLoading = false;
-          });
-          Navigator.pop(context);
-          showToast("Order has been $type", context);
-        });
+          .document(item.id)
+          .delete();
+      _setState(() {
+        isLoading = false;
       });
+      Navigator.pop(context);
+      showToast("Order has been Paid", context);
     });
   }
 

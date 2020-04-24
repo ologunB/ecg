@@ -165,7 +165,7 @@ class _HelpAndSupportState extends State<HelpAndSupport> {
                     m.putIfAbsent("Category", () => selectedCategory);
                     m.putIfAbsent("Title", () => title.text);
                     m.putIfAbsent("Description", () => descrpt.text);
-                    m.putIfAbsent("Date", () => thePresentTime());
+                    m.putIfAbsent("Date", () => presentDate());
                     m.putIfAbsent("Uid", () => MY_UID);
                     m.putIfAbsent("id", () => rnd);
                     m.putIfAbsent("Timestamp",

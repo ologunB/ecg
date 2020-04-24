@@ -9,6 +9,7 @@ import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'expecting_page.dart';
 import 'notification_page.dart';
 
 class HomeView extends StatefulWidget {
@@ -167,9 +168,6 @@ class _HomeViewState extends State<HomeView> {
                 items: [
                   "assets/images/placeholder.png",
                   "assets/images/placeholder.png",
-                  "assets/images/placeholder.png",
-                  "assets/images/placeholder.png",
-                  "assets/images/placeholder.png",
                 ].map((i) {
                   return Builder(
                     builder: (context) {
@@ -232,51 +230,58 @@ class _HomeViewState extends State<HomeView> {
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
-                    StreamBuilder<QuerySnapshot>(
-                      stream: Firestore.instance
-                          .collection("Transactions")
-                          .document("Expecting")
-                          .collection(MY_UID)
-                          .orderBy("Timestamp", descending: true)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        switch (snapshot.connectionState) {
-                          case ConnectionState.waiting:
-                            return Container(
-                              alignment: Alignment.center,
-                              child: CircularProgressIndicator(),
-                              height: 100,
-                              width: 100,
-                            );
-                          default:
-                            int i = 0;
-                            if (snapshot.data.documents.isNotEmpty) {
-                              snapshot.data.documents.map((document) {
-                                Investment item = Investment.map(document);
-                                if (i == 0) {
-                                  expectingTime = timeAgo(
-                                      DateTime.fromMillisecondsSinceEpoch(
-                                          item.timeStamp));
-                                }
-                                i++;
-
-                                snapshot.data.documents.length;
-                                totalExpecting =
-                                    totalExpecting + int.parse(item.amount);
-                              }).toList();
-                            }
-                            return snapshot.data.documents.isEmpty
-                                ? Container(
-                                    child: middleItem("Expecting", "0", "--"),
-                                  )
-                                : Container(
-                                    child: middleItem(
-                                        "Expecting",
-                                        commaFormat.format(totalExpecting),
-                                        expectingTime),
-                                  );
-                        }
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                                builder: (context) => ExpectingPage()));
                       },
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: Firestore.instance
+                            .collection("Transactions")
+                            .document("Expecting")
+                            .collection(MY_UID)
+                            .orderBy("Timestamp", descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return Container(
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator(),
+                                height: 100,
+                                width: 100,
+                              );
+                            default:
+                              int i = 0;
+                              if (snapshot.data.documents.isNotEmpty) {
+                                snapshot.data.documents.map((document) {
+                                  Investment item = Investment.map(document);
+                                  if (i == 0) {
+                                    expectingTime = timeAgo(
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                            item.timeStamp));
+                                  }
+                                  i++;
+
+                                  totalExpecting =
+                                      totalExpecting + int.parse(item.amount);
+                                }).toList();
+                              }
+                              return snapshot.data.documents.isEmpty
+                                  ? Container(
+                                      child: middleItem("Expecting", "0", "--"),
+                                    )
+                                  : Container(
+                                      child: middleItem(
+                                          "Expecting",
+                                          commaFormat.format(totalExpecting),
+                                          expectingTime),
+                                    );
+                          }
+                        },
+                      ),
                     ),
                     StreamBuilder<QuerySnapshot>(
                       stream: Firestore.instance

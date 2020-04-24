@@ -11,10 +11,8 @@ class Constants {
       "Lorem ipsum dolor sit amet, mod tempor incididunt ut labore et dolore magna aliqua.  ";
   static String longLoremText =
       "Lorem ipsum dolor sit amet,  tempor incididu gna aliqua. Ut enim ad minim veniam, quis nostrud exercitation";
-  static List<String> userType = ["Car Owner", "Service Station"];
 }
 
-// ignore: non_constant_identifier_names
 String MY_NAME,
     MY_UID,
     MY_EMAIL,
@@ -40,8 +38,13 @@ String randomString() {
   return result;
 }
 
-String thePresentTime() {
+String presentDate() {
   return DateFormat("EEE MMM d").format(DateTime.now());
+}
+
+String next7Date() {
+  return DateFormat("EEE MMM d")
+      .format(DateTime.now().add(new Duration(days: 7)));
 }
 
 // return DateFormat("EEE MMM d, yyyy HH:mm a").format(DateTime.now());

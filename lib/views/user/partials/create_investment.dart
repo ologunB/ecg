@@ -31,7 +31,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
   }
 
   TextEditingController name = TextEditingController(text: MY_NAME);
-  TextEditingController date = TextEditingController(text: thePresentTime());
+  TextEditingController date = TextEditingController(text: presentDate());
   TextEditingController amount = TextEditingController();
 
   List<Account> accounts = [];
@@ -369,10 +369,10 @@ class _PaymentMethodState extends State<CreateInvestment> {
 
     Map<String, Object> mData = Map();
     mData.putIfAbsent("Name", () => MY_NAME);
-    mData.putIfAbsent("Date", () => thePresentTime());
+    mData.putIfAbsent("Date", () => presentDate());
     mData.putIfAbsent("Amount", () => amount.text);
-    mData.putIfAbsent("To Account ", () => selectedAccount.id);
-    mData.putIfAbsent("Uid", () => MY_UID);
+    mData.putIfAbsent("userUid", () => MY_UID);
+    mData.putIfAbsent("adminUid", () => selectedAccount.uid);
     mData.putIfAbsent("Timestamp", () => DateTime.now().millisecondsSinceEpoch);
     mData.putIfAbsent("id", () => rnd);
 
@@ -391,10 +391,10 @@ class _PaymentMethodState extends State<CreateInvestment> {
 
       Firestore.instance
           .collection("Admin")
-          .document(thePresentTime())
+          .document(presentDate())
           .collection("Transactions")
           .document("Pending")
-          .collection(selectedAccount.id)
+          .collection(selectedAccount.uid)
           .document(rnd)
           .setData(mData);
 
