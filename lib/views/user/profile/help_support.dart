@@ -10,12 +10,12 @@ import 'package:image_picker/image_picker.dart';
 
 import 'change_password.dart';
 
-class HelpAndSupport extends StatefulWidget {
+class CreateTicketPage extends StatefulWidget {
   @override
-  _HelpAndSupportState createState() => _HelpAndSupportState();
+  _CreateTicketPageState createState() => _CreateTicketPageState();
 }
 
-class _HelpAndSupportState extends State<HelpAndSupport> {
+class _CreateTicketPageState extends State<CreateTicketPage> {
   String selectedCategory;
   TextEditingController title = TextEditingController();
   TextEditingController descrpt = TextEditingController();

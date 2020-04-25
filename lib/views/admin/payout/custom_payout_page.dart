@@ -24,7 +24,7 @@ class _ListViewNoteState extends State<CustomPayoutPage>
   @override
   bool get wantKeepAlive => true;
 
-  String selectedDate = presentDate();
+  String selectedDate = next7Date();
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -35,7 +35,7 @@ class _ListViewNoteState extends State<CustomPayoutPage>
         ),
         value: selectedDate,
         underline: SizedBox(),
-        items: dateList().map((value) {
+        items: date7List().map((value) {
           return DropdownMenuItem<String>(
             value: value,
             child: Padding(
@@ -57,7 +57,6 @@ class _ListViewNoteState extends State<CustomPayoutPage>
           setState(() {
             selectedDate = value;
           });
-          FocusScope.of(context).unfocus();
         },
       ),
       Divider(),
@@ -124,7 +123,7 @@ class _ListViewNoteState extends State<CustomPayoutPage>
                               ? PendingPayoutItem(
                                   investment: Investment.map(document),
                                   color: widget.color,
-                                  type: "Confirmed")
+                                  type: widget.type)
                               : EachOrderItem(
                                   investment: Investment.map(document),
                                   color: widget.color,

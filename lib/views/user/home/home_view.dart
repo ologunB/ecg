@@ -544,121 +544,115 @@ class _HomeViewState extends State<HomeView> {
                       fontWeight: FontWeight.w600),
                 ),
               ),
-              ListView(
-                // physics: FixedExtentScrollPhysics(),
-                shrinkWrap: true,
-                children: <Widget>[
-                  StreamBuilder<QuerySnapshot>(
-                    stream: Firestore.instance
-                        .collection("Transactions")
-                        .document("Pending")
-                        .collection(MY_UID)
-                        .orderBy("Timestamp", descending: true)
-                        .limit(1)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return Container(
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                CircularProgressIndicator(),
-                                Text(
-                                  "Getting Data",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16),
-                                ),
-                              ],
+              StreamBuilder<QuerySnapshot>(
+                stream: Firestore.instance
+                    .collection("Transactions")
+                    .document("Pending")
+                    .collection(MY_UID)
+                    .orderBy("Timestamp", descending: true)
+                    .limit(1)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return Container(
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            CircularProgressIndicator(),
+                            Text(
+                              "Getting Data",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16),
                             ),
-                            height: 100,
-                            width: 100,
-                          );
-                        default:
-                          return snapshot.data.documents.isEmpty
-                              ? Container(
-                                  height: 100,
-                                  width: 100,
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "No Recent",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 18),
-                                  ),
-                                )
-                              : Container(
-                                  child: ListView(
-                                    shrinkWrap: true,
-                                    children:
-                                        snapshot.data.documents.map((document) {
-                                      return EachOrderItem(
-                                        investment: Investment.map(document),
-                                        color: Styles.appPrimaryColor,
-                                        type: "Pending",
-                                      );
-                                    }).toList(),
-                                  ),
-                                );
+                          ],
+                        ),
+                        height: 100,
+                        width: 100,
+                      );
+                    default:
+                      Investment item;
+                      if (snapshot.data.documents.isNotEmpty) {
+                        snapshot.data.documents.map((document) {
+                          item = Investment.map(document);
+                        }).toList();
                       }
-                    },
-                  ),
-                  StreamBuilder<QuerySnapshot>(
-                    stream: Firestore.instance
-                        .collection("Transactions")
-                        .document("Confirmed")
-                        .collection(MY_UID)
-                        .orderBy("Timestamp", descending: true)
-                        .limit(1)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return Container(
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                CircularProgressIndicator(),
-                                Text(
-                                  "Getting Data",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16),
-                                ),
-                              ],
+                      return snapshot.data.documents.isEmpty
+                          ? Container(
+                              height: 100,
+                              width: 100,
+                              alignment: Alignment.center,
+                              child: Text(
+                                "No Recent",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 18),
+                              ),
+                            )
+                          : Container(
+                              child: EachOrderItem(
+                                investment: item,
+                                color: Styles.appPrimaryColor,
+                                type: "Pending",
+                              ),
+                            );
+                  }
+                },
+              ),
+              StreamBuilder<QuerySnapshot>(
+                stream: Firestore.instance
+                    .collection("Transactions")
+                    .document("Confirmed")
+                    .collection(MY_UID)
+                    .orderBy("Timestamp", descending: true)
+                    .limit(1)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return Container(
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            CircularProgressIndicator(),
+                            Text(
+                              "Getting Data",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16),
                             ),
-                            height: 100,
-                            width: 100,
-                          );
-                        default:
-                          return snapshot.data.documents.isEmpty
-                              ? Container()
-                              : Container(
-                                  child: ListView(
-                                    shrinkWrap: true,
-                                    children:
-                                        snapshot.data.documents.map((document) {
-                                      return EachOrderItem(
-                                        investment: Investment.map(document),
-                                        color: Colors.green,
-                                        type: "Confirmed",
-                                      );
-                                    }).toList(),
-                                  ),
-                                );
+                          ],
+                        ),
+                        height: 100,
+                        width: 100,
+                      );
+                    default:
+                      Investment item;
+                      if (snapshot.data.documents.isNotEmpty) {
+                        snapshot.data.documents.map((document) {
+                          item = Investment.map(document);
+                        }).toList();
                       }
-                    },
-                  ),
-                ],
+                      return snapshot.data.documents.isEmpty
+                          ? Container()
+                          : Container(
+                              child: EachOrderItem(
+                                investment: item,
+                                color: Colors.green,
+                                type: "Confirmed",
+                              ),
+                            );
+                  }
+                },
               ),
             ],
           ),

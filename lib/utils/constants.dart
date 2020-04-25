@@ -82,6 +82,16 @@ List<String> dateList() {
   return last30Days;
 }
 
+List<String> date7List() {
+  List<String> last30Days = [];
+  DateTime next7days = DateTime.now().add(new Duration(days: 7));
+  for (int i = 0; i < 30; i++) {
+    DateTime dayAgo = next7days.subtract(new Duration(days: i));
+    last30Days.add(DateFormat("EEE MMM d").format(dayAgo));
+  }
+  return last30Days;
+}
+
 String greeting() {
   var hour = DateTime.now().hour;
   if (hour < 12) {

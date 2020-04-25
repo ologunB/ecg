@@ -80,111 +80,6 @@ class _PendingPayoutItemState extends State<PendingPayoutItem> {
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-/*
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: FlatButton(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (_) {
-                              return StatefulBuilder(
-                                builder: (context, _setState) {
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(25.0),
-                                      ),
-                                    ),
-                                    child: AlertDialog(
-                                      title: Center(
-                                        child: Text(
-                                          isLoading
-                                              ? "Processing"
-                                              : "Do you want to cancel the order?",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      content: Container(
-                                        child: isLoading
-                                            ? Container(
-                                                alignment: Alignment.center,
-                                                height: 100,
-                                                width: 100,
-                                                child:
-                                                    CircularProgressIndicator())
-                                            : Container(),
-                                      ),
-                                      actions: <Widget>[
-                                        InkWell(
-                                          onTap: isLoading
-                                              ? null
-                                              : () {
-                                                  Navigator.pop(context);
-                                                },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              isLoading ? "" : "CANCEL",
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: isLoading
-                                              ? null
-                                              : () {
-                                                  processOrder(
-                                                      widget.investment,
-                                                      _setState,
-                                                      "Cancelled");
-                                                },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              isLoading ? "" : "YES",
-                                              style: TextStyle(
-                                                  color: Styles.appPrimaryColor,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            });
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "CANCEL",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-*/
                   Container(
                     decoration: BoxDecoration(
                       color: Styles.appPrimaryColor,
@@ -209,7 +104,7 @@ class _PendingPayoutItemState extends State<PendingPayoutItem> {
                                         child: Text(
                                           isLoading
                                               ? "Processing"
-                                              : "Are you sure you have paid him?",
+                                              : "Are you sure you have paid?",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               color: Colors.black,
@@ -333,6 +228,13 @@ class _PendingPayoutItemState extends State<PendingPayoutItem> {
           .document("Confirmed")
           .collection(MY_UID)
           .document(item.id)
+          .delete();
+
+      Firestore.instance
+          .collection("Transactions")
+          .document("Expecting")
+          .collection(item.userUid) // user expecting
+          .document(item.date)
           .delete();
       _setState(() {
         isLoading = false;

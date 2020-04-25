@@ -1,6 +1,7 @@
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/admin/auth/admin_auth_page.dart';
+import 'package:ecgalpha/views/admin/settings/tickets_management.dart';
 import 'package:ecgalpha/views/admin/settings/user_management.dart';
 import 'package:ecgalpha/views/user/profile/change_password.dart';
 import 'package:ecgalpha/views/user/profile/update_details.dart';
@@ -166,6 +167,37 @@ class _ProfileViewState extends State<SettingsView> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
                                   "Send Notification",
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.black),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => TicketManagementPage(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(Icons.help, color: Colors.yellow),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Ticket Management",
                                   style: TextStyle(
                                       fontSize: 20, color: Colors.black),
                                 ),

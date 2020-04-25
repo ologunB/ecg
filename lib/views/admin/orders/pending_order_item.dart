@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:ecgalpha/utils/toast.dart';
 import 'package:ecgalpha/views/admin/orders/order_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -346,51 +347,65 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
       Firestore.instance
           .collection("Transactions")
           .document("Confirmed")
-          .collection(item.userUid)
+          .collection(item.userUid) // user confirmed
           .document(item.id)
           .setData(userData)
           .then((val) {
-        showToast("1", context);
-
         Firestore.instance
             .collection("Admin")
             .document(item.date)
             .collection("Transactions")
             .document("Confirmed")
-            .collection(MY_UID)
+            .collection(MY_UID) // payout pending
             .document(item.userUid)
             .setData(adminData)
             .then((a) {
+          /*   Firestore.instance
+              .collection("Admin")
+              .document(item.date)
+              .collection("Transactions")
+              .document("Confirmed")
+              .collection(MY_UID)     // admin confirmed
+              .document(item.id)
+              .setData(userData)
+              .then((a) {
+
+          });
+*/
+
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pop(context);
+          showToast("Order has been Confirmed ", context);
+        });
+      });
+
+      Firestore.instance
+          .collection("Transactions")
+          .document("Expecting")
+          .collection(item.userUid) // user expecting
+          .document(item.date)
+          .setData(adminData)
+          .then((a) {
+        Firestore.instance
+            .collection("Admin")
+            .document(item.date)
+            .collection("Transactions")
+            .document("Pending")
+            .collection(MY_UID)
+            .document(item.id)
+            .delete()
+            .then((a) {
           Firestore.instance
               .collection("Transactions")
-              .document("Expecting")
+              .document("Pending")
               .collection(item.userUid)
-              .document(item.date)
-              .setData(adminData)
+              .document(item.id)
+              .delete()
               .then((a) {
-            Firestore.instance
-                .collection("Admin")
-                .document(item.date)
-                .collection("Transactions")
-                .document("Pending")
-                .collection(MY_UID)
-                .document(item.id)
-                .delete()
-                .then((a) {
-              Firestore.instance
-                  .collection("Transactions")
-                  .document("Pending")
-                  .collection(item.userUid)
-                  .document(item.id)
-                  .delete()
-                  .then((a) {
-                _setState(() {
-                  isLoading = false;
-                });
-                Navigator.pop(context);
-                showToast("Order has been Confirmed ", context);
-              });
-            });
+            Toast.show("Almost done", context,
+                duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
           });
         });
       });

@@ -22,12 +22,39 @@ class CreateInvestment extends StatefulWidget {
 
 class _PaymentMethodState extends State<CreateInvestment> {
   File pop;
-  Future getImage() async {
-    var img = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+  Future _getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     setState(() {
-      pop = img;
+      pop = image;
     });
+  }
+
+  String _retrieveDataError;
+
+  Future<void> retrieveLostData() async {
+    //var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        pop = image;
+      });
+      return;
+    } else {
+      final LostDataResponse response = await ImagePicker.retrieveLostData();
+      if (response.isEmpty) {
+        return;
+      }
+      if (response.file != null) {
+        setState(() {
+          pop = response.file;
+        });
+      } else {
+        _retrieveDataError = response.exception.code;
+      }
+    }
   }
 
   TextEditingController name = TextEditingController(text: MY_NAME);
@@ -61,17 +88,48 @@ class _PaymentMethodState extends State<CreateInvestment> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                FutureBuilder<void>(
+                  future: retrieveLostData(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                      case ConnectionState.waiting:
+                        return const Text(
+                          'You have not yet picked an image.',
+                          textAlign: TextAlign.center,
+                        );
+                      case ConnectionState.done:
+                        return pop != null ? Image.file(pop) : Container();
+                      default:
+                        if (snapshot.hasError) {
+                          return Text(
+                            'Pick image/video error: ${snapshot.error}}',
+                            textAlign: TextAlign.center,
+                          );
+                        } else {
+                          return const Text(
+                            'You have not yet picked an image.',
+                            textAlign: TextAlign.center,
+                          );
+                        }
+                    }
+                  },
+                ),
+                RaisedButton(
+                  onPressed: () {},
+                  child: Text("choose image"),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 18.0),
                   child: Container(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        text("Name"),
+                        text("Account sent from"),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: TextFormField(
-                            enabled: false,
                             decoration: InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Enter here"),
@@ -202,7 +260,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
                           padding: const EdgeInsets.all(8.0),
                           child: InkWell(
                             onTap: () {
-                              getImage();
+                              _getImage();
                             },
                             child: pop == null
                                 ? Container(
@@ -270,7 +328,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
               onPress: () {
                 if (!checkedValue || pop == null) {
                   showToast("Upload a Proof of Payment!", context);
-                  // return;
+                  return;
                 }
                 if (amount.text.isEmpty || selectedAccount == null) {
                   showToast("Fill all values!", context);
@@ -376,18 +434,16 @@ class _PaymentMethodState extends State<CreateInvestment> {
     mData.putIfAbsent("Timestamp", () => DateTime.now().millisecondsSinceEpoch);
     mData.putIfAbsent("id", () => rnd);
 
-    // if (pop != null) {
-    if (true) {
+    if (pop != null) {
       _setState(() {
         isLoading = true;
       });
 
-      /*StorageReference storeRef = _storageRef.child("images/${randomString()}");
+      StorageReference storeRef = _storageRef.child("images/${randomString()}");
       StorageUploadTask uploadTask = storeRef.putFile(pop);
       StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
       String url = (await downloadUrl.ref.getDownloadURL());
       mData.putIfAbsent("POP", () => url);
-*/
 
       Firestore.instance
           .collection("Admin")

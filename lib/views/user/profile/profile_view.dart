@@ -36,6 +36,15 @@ class _ProfileViewState extends State<ProfileView> {
     processImage(img);
   }
 
+  Future getImageCamera() async {
+    var img = await ImagePicker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      image = img;
+    });
+    processImage(img);
+  }
+
   void processImage(File file) async {
     if (file != null) {
       String url = await uploadImage(file);
@@ -58,15 +67,6 @@ class _ProfileViewState extends State<ProfileView> {
       Toast.show("Image Uploaded", context,
           gravity: Toast.BOTTOM, duration: Toast.LENGTH_LONG);
     }
-  }
-
-  Future getImageCamera() async {
-    var img = await ImagePicker.pickImage(source: ImageSource.camera);
-
-    setState(() {
-      image = img;
-    });
-    processImage(img);
   }
 
   @override

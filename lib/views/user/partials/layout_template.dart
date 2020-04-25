@@ -17,13 +17,13 @@ class LayoutTemplate extends StatefulWidget {
 class _LayoutTemplateState extends State<LayoutTemplate> {
   final List<Widget> pages = [
     HomeView(
-      key: PageStorageKey('Page1'),
+      key: PageStorageKey('Page7'),
     ),
     OrdersView(
-      key: PageStorageKey('Page2'),
+      key: PageStorageKey('Page8'),
     ),
     ProfileView(
-      key: PageStorageKey('Page3'),
+      key: PageStorageKey('Page9'),
     )
   ];
 

@@ -1,5 +1,6 @@
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/admin/orders/order_view.dart';
+import 'package:ecgalpha/views/admin/payout/payout_view.dart';
 import 'package:ecgalpha/views/admin/settings/settings_page.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,7 +23,7 @@ class _AdminLayoutTemplateState extends State<AdminLayoutTemplate> {
     OrdersView(
       key: PageStorageKey('Page2'),
     ),
-    OrdersView(
+    PayoutView(
       key: PageStorageKey('Page3'),
     ),
     SettingsView(

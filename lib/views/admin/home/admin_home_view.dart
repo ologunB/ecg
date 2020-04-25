@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/utils/constants.dart';
-import 'package:ecgalpha/views/user/home/home_view.dart';
+import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/user/home/notification_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +58,10 @@ class _AdminHomeViewState extends State<AdminHomeView> {
     MY_IMAGE = await image;
   }
 
+  int todayUnpaid = 0;
+  int todayPaid = 0;
+  int todayPending = 0;
+  int todayConfirmed = 0;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -126,11 +132,182 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                   ListView(
                     shrinkWrap: true,
                     children: <Widget>[
-                      item("amount", types[0]),
-                      item("amount", types[1]),
-                      item("amount", types[2]),
-                      item("amount", types[3]),
-                      item("amount", types[4]),
+                      StreamBuilder<QuerySnapshot>(
+                        stream: Firestore.instance
+                            .collection("Admin")
+                            .document(presentDate())
+                            .collection("Transactions")
+                            .document("Pending")
+                            .collection(MY_UID)
+                            .orderBy("Timestamp", descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return Container(
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator(),
+                                height: 100,
+                                width: 100,
+                              );
+                            default:
+                              if (snapshot.data.documents.isNotEmpty) {
+                                todayPending = 0;
+                                snapshot.data.documents.map((document) {
+                                  Investment item = Investment.map(document);
+
+                                  if (item.date == presentDate()) {
+                                    todayPending =
+                                        todayPending + int.parse(item.amount);
+                                  }
+                                }).toList();
+                              }
+                              return snapshot.data.documents.isEmpty
+                                  ? Container(
+                                      child: item(
+                                        " 0.00",
+                                        "Today's Pending",
+                                      ),
+                                    )
+                                  : Container(
+                                      child: item(
+                                          commaFormat.format(todayPending),
+                                          "Today's Pending"));
+                          }
+                        },
+                      ),
+                      StreamBuilder<QuerySnapshot>(
+                        stream: Firestore.instance
+                            .collection("Admin")
+                            .document(presentDate())
+                            .collection("Transactions")
+                            .document("Confirmed")
+                            .collection(MY_UID)
+                            .orderBy("Timestamp", descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return Container(
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator(),
+                                height: 100,
+                                width: 100,
+                              );
+                            default:
+                              if (snapshot.data.documents.isNotEmpty) {
+                                todayConfirmed = 0;
+                                snapshot.data.documents.map((document) {
+                                  Investment item = Investment.map(document);
+
+                                  if (item.date == presentDate()) {
+                                    todayConfirmed =
+                                        todayConfirmed + int.parse(item.amount);
+                                  }
+                                }).toList();
+                              }
+                              return snapshot.data.documents.isEmpty
+                                  ? Container(
+                                      child: item(
+                                        " 0.00",
+                                        "Today's Confirmed",
+                                      ),
+                                    )
+                                  : Container(
+                                      child: item(
+                                          commaFormat.format(todayConfirmed),
+                                          "Today's Confirmed"));
+                          }
+                        },
+                      ),
+                      StreamBuilder<QuerySnapshot>(
+                        stream: Firestore.instance
+                            .collection("Admin")
+                            .document(next7Date())
+                            .collection("Transactions")
+                            .document("Confirmed")
+                            .collection(MY_UID)
+                            .orderBy("Timestamp", descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return Container(
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator(),
+                                height: 100,
+                                width: 100,
+                              );
+                            default:
+                              if (snapshot.data.documents.isNotEmpty) {
+                                todayUnpaid = 0;
+                                snapshot.data.documents.map((document) {
+                                  Investment item = Investment.map(document);
+
+                                  if (item.date == presentDate()) {
+                                    todayUnpaid =
+                                        todayUnpaid + int.parse(item.amount);
+                                  }
+                                }).toList();
+                              }
+                              return snapshot.data.documents.isEmpty
+                                  ? Container(
+                                      child: item(
+                                        " 0.00",
+                                        "Today's Unpaid",
+                                      ),
+                                    )
+                                  : Container(
+                                      child: item(
+                                      commaFormat.format(todayUnpaid),
+                                      "Today's Unpaid",
+                                    ));
+                          }
+                        },
+                      ),
+                      StreamBuilder<QuerySnapshot>(
+                        stream: Firestore.instance
+                            .collection("Admin")
+                            .document(next7Date())
+                            .collection("Transactions")
+                            .document("Paid")
+                            .collection(MY_UID)
+                            .orderBy("Timestamp", descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return Container(
+                                alignment: Alignment.center,
+                                child: CircularProgressIndicator(),
+                                height: 100,
+                                width: 100,
+                              );
+                            default:
+                              if (snapshot.data.documents.isNotEmpty) {
+                                todayPaid = 0;
+                                snapshot.data.documents.map((document) {
+                                  Investment item = Investment.map(document);
+
+                                  if (item.date == presentDate()) {
+                                    todayPaid =
+                                        todayPaid + int.parse(item.amount);
+                                  }
+                                }).toList();
+                              }
+                              return snapshot.data.documents.isEmpty
+                                  ? Container(
+                                      child: item(
+                                        " 0.00",
+                                        "Today's Paid",
+                                      ),
+                                    )
+                                  : Container(
+                                      child: item(commaFormat.format(todayPaid),
+                                          "Today's Paid"));
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ],
@@ -169,19 +346,19 @@ Widget item(String amount, String type) => Padding(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Text(
-              type,
+              "₦" + amount,
               style: TextStyle(
                   fontSize: 23,
-                  fontWeight: FontWeight.w300,
+                  fontWeight: FontWeight.bold,
                   color: Colors.black),
             ),
             SizedBox(height: 15),
             Text(
-              amount,
+              type,
               style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.green),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                  color: Styles.appPrimaryColor),
             ),
             SizedBox(height: 7),
           ],
