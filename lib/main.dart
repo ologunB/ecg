@@ -2,7 +2,6 @@ import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/admin/admin_layout_template.dart';
 import 'package:ecgalpha/views/user/auth/auth_page.dart';
-import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:ecgalpha/views/user/partials/layout_template.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +31,7 @@ class MyWrapper extends StatefulWidget {
 class _MyWrapperState extends State<MyWrapper> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   Future<String> remememail, remempass, type;
+  Future<String> uid, email, name, bName, aName, bNum, image;
 
   @override
   void initState() {
@@ -47,12 +47,41 @@ class _MyWrapperState extends State<MyWrapper> {
       return (prefs.getString('REMEMBER_pass') ?? "");
     });
 
+    uid = _prefs.then((prefs) {
+      return (prefs.getString('uid') ?? "customerUID");
+    });
+    email = _prefs.then((prefs) {
+      return (prefs.getString('email') ?? "customerEmail");
+    });
+    name = _prefs.then((prefs) {
+      return (prefs.getString('name') ?? "customerName");
+    });
+    bName = _prefs.then((prefs) {
+      return (prefs.getString('Bank Name') ?? "bankName");
+    });
+    aName = _prefs.then((prefs) {
+      return (prefs.getString('Account Name') ?? "accName");
+    });
+    bNum = _prefs.then((prefs) {
+      return (prefs.getString('Account Number') ?? "accNum");
+    });
+    image = _prefs.then((prefs) {
+      return (prefs.getString('image') ?? "image");
+    });
+
     doAssign();
   }
 
   void doAssign() async {
     REMEMBER_EMAIL = await remememail;
     REMEMBER_PASS = await remempass;
+    MY_NAME = await name;
+    MY_UID = await uid;
+    MY_EMAIL = await email;
+    MY_ACCOUNT_NUMBER = await bNum;
+    MY_BANK_ACCOUNT_NAME = await aName;
+    MY_BANK_NAME = await bName;
+    MY_IMAGE = await image;
   }
 
   @override
@@ -63,7 +92,10 @@ class _MyWrapperState extends State<MyWrapper> {
           if (snapshot.connectionState == ConnectionState.done) {
             String loggedIn = snapshot.data;
             if (loggedIn == "User") {
-              return LayoutTemplate(pageSelectedIndex: 0);
+              return LayoutTemplate(
+                pageSelectedIndex: 0,
+                fromWhere: "Main",
+              );
             } else if (loggedIn == "Admin") {
               return AdminLayoutTemplate();
             } else {

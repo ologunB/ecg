@@ -445,12 +445,13 @@ class _PaymentMethodState extends State<CreateInvestment> {
         isLoading = true;
       });
 
-    /*  StorageReference storeRef = _storageRef.child("images/${randomString()}");
+      /*  StorageReference storeRef = _storageRef.child("images/${randomString()}");
       StorageUploadTask uploadTask = storeRef.putFile(pop);
       StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
       String url = (await downloadUrl.ref.getDownloadURL());
-      mData.putIfAbsent("POP", () => url);
 */
+      mData.putIfAbsent("pop", () => "url");
+
       Firestore.instance
           .collection("Admin")
           .document(presentDate())

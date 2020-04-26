@@ -17,6 +17,15 @@ class OrderDetails extends StatefulWidget {
 }
 
 class _OrderDetailsState extends State<OrderDetails> {
+  String accName = "--";
+  String accNum = "--";
+  String bankName = "--";
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     double amount = double.parse(widget.investment.amount);
@@ -50,39 +59,102 @@ class _OrderDetailsState extends State<OrderDetails> {
                         .document(widget.investment.userUid)
                         .snapshots(),
                     builder: (context, snapshot) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(40.0),
-                        child: CachedNetworkImage(
-                          imageUrl: snapshot.data["Avatar"].isEmpty
-                              ? "ma"
-                              : snapshot.data["Avatar"],
-                          height: 80,
-                          width: 80,
-                          placeholder: (context, url) => ClipRRect(
+                      return Column(
+                        children: <Widget>[
+                          ClipRRect(
                             borderRadius: BorderRadius.circular(40.0),
-                            child: Image(
-                                image: AssetImage("assets/images/person.png"),
-                                height: 80,
-                                width: 80,
-                                fit: BoxFit.contain),
+                            child: CachedNetworkImage(
+                              imageUrl: snapshot.data["Avatar"].isEmpty
+                                  ? "ma"
+                                  : snapshot.data["Avatar"],
+                              height: 80,
+                              width: 80,
+                              placeholder: (context, url) => ClipRRect(
+                                borderRadius: BorderRadius.circular(40.0),
+                                child: Image(
+                                    image:
+                                        AssetImage("assets/images/person.png"),
+                                    height: 80,
+                                    width: 80,
+                                    fit: BoxFit.contain),
+                              ),
+                              errorWidget: (context, url, error) => ClipRRect(
+                                borderRadius: BorderRadius.circular(40.0),
+                                child: Image(
+                                    image:
+                                        AssetImage("assets/images/person.png"),
+                                    height: 80,
+                                    width: 80,
+                                    fit: BoxFit.contain),
+                              ),
+                            ),
                           ),
-                          errorWidget: (context, url, error) => ClipRRect(
-                            borderRadius: BorderRadius.circular(40.0),
-                            child: Image(
-                                image: AssetImage("assets/images/person.png"),
-                                height: 80,
-                                width: 80,
-                                fit: BoxFit.contain),
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  "User Details",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black),
+                                ),
+                              ),
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.start,
                           ),
-                        ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    snapshot.data["Account Name"],
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.start,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5.0),
+                                    child: Text(
+                                      snapshot.data["Bank Name"],
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.black),
+                                    ),
+                                  ),
+                                  SizedBox(width: 30),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5.0),
+                                    child: Text(
+                                      snapshot.data["Bank Number"],
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.black),
+                                    ),
+                                  ),
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.start,
+                              ),
+                            ],
+                          ),
+                        ],
                       );
                     }),
-                Text(widget.investment.name,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -281,6 +353,43 @@ class _OrderDetailsState extends State<OrderDetails> {
                   padding: const EdgeInsets.all(8.0),
                   child: Divider(),
                 ),
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 18.0),
+                      child: Text(
+                        "Proof of Payment",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black),
+                      ),
+                    ),
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.start,
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width / 1.2,
+                  child: CachedNetworkImage(
+                    imageUrl: widget.investment.pop.isEmpty
+                        ? "ma"
+                        : widget.investment.pop.isEmpty,
+                    fit: BoxFit.fitWidth,
+                    placeholder: (context, url) => ClipRRect(
+                      borderRadius: BorderRadius.circular(40.0),
+                      child: Image(
+                          image: AssetImage("assets/images/placeholder.png"),
+                          fit: BoxFit.fitWidth),
+                    ),
+                    errorWidget: (context, url, error) => ClipRRect(
+                      borderRadius: BorderRadius.circular(40.0),
+                      child: Image(
+                          image: AssetImage("assets/images/placeholder.png"),
+                          fit: BoxFit.fitWidth),
+                    ),
+                  ),
+                )
               ],
             ),
           ),

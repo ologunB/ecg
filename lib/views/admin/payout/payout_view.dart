@@ -61,7 +61,7 @@ class _PayoutViewState extends State<PayoutView>
           height: double.infinity,
           width: double.infinity,
           child: TabBarView(children: [
-            CustomPayoutPage(color: Styles.appPrimaryColor, type: "Confirmed"),
+            CustomPayoutPage(color: Styles.appPrimaryColor, type: "Unpaid"),
             CustomPayoutPage(color: Styles.appPrimaryColor, type: "Paid"),
           ]),
         ),

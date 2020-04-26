@@ -1,8 +1,8 @@
-import 'package:ecgalpha/models/investment.dart';
+import 'package:ecgalpha/views/user/home/home_view.dart';
 import 'package:flutter/material.dart';
 
 class ExpectingPage extends StatefulWidget {
-  final List<Investment> items;
+  final List<Expect> items;
 
   const ExpectingPage({Key key, @required this.items}) : super(key: key);
   @override

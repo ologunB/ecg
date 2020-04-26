@@ -20,7 +20,14 @@ class HomeView extends StatefulWidget {
   _HomeViewState createState() => _HomeViewState();
 }
 
-List<Investment> expectingList = [];
+class Expect {
+  final String amount;
+  final String date;
+
+  Expect(this.amount, this.date);
+}
+
+List<Expect> expectingList = [];
 
 Widget middleItem(String type, String amount, String time, context) => Padding(
       padding: EdgeInsets.all(8.0),
@@ -307,7 +314,8 @@ class _HomeViewState extends State<HomeView> {
                               expectingList.clear();
                               snapshot.data.documents.map((document) {
                                 Investment item = Investment.map(document);
-                                expectingList.add(item);
+                                expectingList.add(
+                                    Expect(item.amount, document.documentID));
                                 if (i == 0) {
                                   expectingTime = timeAgo(
                                       DateTime.fromMillisecondsSinceEpoch(

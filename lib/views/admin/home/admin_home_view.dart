@@ -152,7 +152,6 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                                     "Today's Pending",
                                   ),
                                 ),
-
                               );
                             default:
                               if (snapshot.data.documents.isNotEmpty) {
@@ -198,7 +197,6 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                                   " 0.00",
                                   "Today's Confirmed",
                                 ),
-
                               );
                             default:
                               if (snapshot.data.documents.isNotEmpty) {
@@ -229,9 +227,9 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                       StreamBuilder<QuerySnapshot>(
                         stream: Firestore.instance
                             .collection("Admin")
-                            .document(next7Date())
+                            .document(presentDate())
                             .collection("Transactions")
-                            .document("Confirmed")
+                            .document("Unpaid")
                             .collection(MY_UID)
                             .orderBy("Timestamp", descending: true)
                             .snapshots(),
@@ -244,7 +242,6 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                                   " 0.00",
                                   "Today's Unpaid",
                                 ),
-
                               );
                             default:
                               if (snapshot.data.documents.isNotEmpty) {
@@ -276,7 +273,7 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                       StreamBuilder<QuerySnapshot>(
                         stream: Firestore.instance
                             .collection("Admin")
-                            .document(next7Date())
+                            .document(presentDate())
                             .collection("Transactions")
                             .document("Paid")
                             .collection(MY_UID)
@@ -291,7 +288,6 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                                   " 0.00",
                                   "Today's Paid",
                                 ),
-
                               );
                             default:
                               if (snapshot.data.documents.isNotEmpty) {
@@ -351,26 +347,32 @@ Widget item(String amount, String type) => Padding(
             topRight: Radius.circular(25),
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Text(
-              "₦" + amount,
-              style: TextStyle(
-                  fontSize: 23,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-            ),
-            SizedBox(height: 15),
-            Text(
-              type,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                  color: Styles.appPrimaryColor),
-            ),
-            SizedBox(height: 7),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "₦" + amount,
+                  style: TextStyle(
+                      fontSize: 23,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+                SizedBox(height: 15),
+                Text(
+                  type,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                      color: Styles.appPrimaryColor),
+                ),
+                SizedBox(height: 7),
+              ],
+            )
           ],
         ),
       ),

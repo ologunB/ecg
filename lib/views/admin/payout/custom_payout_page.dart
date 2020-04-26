@@ -119,7 +119,7 @@ class _ListViewNoteState extends State<CustomPayoutPage>
                       )
                     : ListView(
                         children: snapshot.data.documents.map((document) {
-                          return widget.type == "Confirmed"
+                          return widget.type == "Unpaid"
                               ? PendingPayoutItem(
                                   investment: Investment.map(document),
                                   color: widget.color,

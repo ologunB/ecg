@@ -331,6 +331,7 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
           "Timestamp", () => DateTime.now().millisecondsSinceEpoch);
       adminData.putIfAbsent("id", () => item.id);
       adminData.putIfAbsent("Confirmed By", () => MY_NAME);
+      adminData.putIfAbsent("pop", () => item.pop);
 
       Map<String, Object> userData = Map();
       userData.putIfAbsent("Name", () => item.name);
@@ -339,6 +340,7 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
       userData.putIfAbsent("Amount", () => item.amount);
       userData.putIfAbsent("userUid", () => item.userUid);
       userData.putIfAbsent("adminUid", () => item.adminUid);
+      userData.putIfAbsent("pop", () => item.pop);
       userData.putIfAbsent(
           "Timestamp", () => DateTime.now().millisecondsSinceEpoch);
       userData.putIfAbsent("id", () => item.id);
@@ -353,32 +355,31 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
           .then((val) {
         Firestore.instance
             .collection("Admin")
-            .document(next7Date())
+            .document(item.date)
             .collection("Transactions")
             .document("Confirmed")
             .collection(MY_UID) // payout pending
             .document(item.userUid)
             .setData(adminData)
             .then((a) {
-          /*   Firestore.instance
+          Firestore.instance
               .collection("Admin")
-              .document(item.date)
+              .document(next7Date())
               .collection("Transactions")
-              .document("Confirmed")
-              .collection(MY_UID)     // admin confirmed
+              .document("Unpaid")
+              .collection(MY_UID) // admin confirmed
               .document(item.id)
               .setData(userData)
               .then((a) {
-
+            _setState(() {
+              isLoading = false;
+            });
+            setState(() {
+              isLoading = false;
+            });
+            Navigator.pop(context);
+            showToast("Order has been Confirmed ", context);
           });
-*/
-
-          _setState(() {
-            isLoading = false;
-          });
-
-          Navigator.pop(context);
-          showToast("Order has been Confirmed ", context);
         });
       });
 
@@ -408,6 +409,9 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
             _setState(() {
               isLoading = false;
             });
+            setState(() {
+              isLoading = false;
+            });
             Toast.show("Almost done", context,
                 duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
             Navigator.pop(context);
@@ -430,6 +434,7 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
         "Timestamp", () => DateTime.now().millisecondsSinceEpoch);
     userData.putIfAbsent("id", () => item.id);
     userData.putIfAbsent("Confirmed By", () => MY_NAME);
+    userData.putIfAbsent("pop", () => item.pop);
 
     _setState(() {
       isLoading = true;

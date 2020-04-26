@@ -1,6 +1,7 @@
 import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class OrderDetails extends StatefulWidget {

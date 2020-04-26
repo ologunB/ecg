@@ -205,11 +205,12 @@ class _PendingPayoutItemState extends State<PendingPayoutItem> {
     mData.putIfAbsent("Name", () => item.name);
     mData.putIfAbsent("Date", () => item.date);
     mData.putIfAbsent("Amount", () => item.amount);
-    mData.putIfAbsent("To Account ", () => MY_UID);
-    mData.putIfAbsent("Uid", () => MY_UID);
+    mData.putIfAbsent("userUid", () => item.userUid);
+    mData.putIfAbsent("adminUid", () => item.adminUid);
     mData.putIfAbsent("Timestamp", () => DateTime.now().millisecondsSinceEpoch);
     mData.putIfAbsent("id", () => item.id);
     mData.putIfAbsent("Confirmed By", () => MY_NAME);
+    mData.putIfAbsent("pop", () => item.pop);
 
     _setState(() {
       isLoading = true;
@@ -228,7 +229,7 @@ class _PendingPayoutItemState extends State<PendingPayoutItem> {
           .collection("Admin")
           .document(item.date)
           .collection("Transactions")
-          .document("Confirmed")
+          .document("Unpaid")
           .collection(MY_UID)
           .document(item.userUid)
           .delete();
