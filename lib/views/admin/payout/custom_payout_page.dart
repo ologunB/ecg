@@ -24,7 +24,7 @@ class _ListViewNoteState extends State<CustomPayoutPage>
   @override
   bool get wantKeepAlive => true;
 
-  String selectedDate = next7Date();
+  String selectedDate = presentDate();
   @override
   Widget build(BuildContext context) {
     return Column(children: [

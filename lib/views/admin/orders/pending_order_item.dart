@@ -353,7 +353,7 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
           .then((val) {
         Firestore.instance
             .collection("Admin")
-            .document(item.date)
+            .document(next7Date())
             .collection("Transactions")
             .document("Confirmed")
             .collection(MY_UID) // payout pending
@@ -373,9 +373,10 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
           });
 */
 
-          setState(() {
+          _setState(() {
             isLoading = false;
           });
+
           Navigator.pop(context);
           showToast("Order has been Confirmed ", context);
         });
@@ -385,7 +386,7 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
           .collection("Transactions")
           .document("Expecting")
           .collection(item.userUid) // user expecting
-          .document(item.date)
+          .document(next7Date())
           .setData(adminData)
           .then((a) {
         Firestore.instance
@@ -404,8 +405,12 @@ class _PendingOrderItemState extends State<PendingOrderItem> {
               .document(item.id)
               .delete()
               .then((a) {
+            _setState(() {
+              isLoading = false;
+            });
             Toast.show("Almost done", context,
                 duration: Toast.LENGTH_SHORT, gravity: Toast.CENTER);
+            Navigator.pop(context);
           });
         });
       });

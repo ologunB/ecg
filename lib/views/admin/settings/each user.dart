@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecgalpha/models/investment.dart';
 import 'package:ecgalpha/models/user.dart';
+import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/user/orders/custom_order_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,6 +21,9 @@ class _UserProfileState extends State<UserProfile> {
   Widget build(BuildContext context) {
     User user = widget.user;
 
+    int totalConfirmed = 0;
+    int totalCancelled = 0;
+    int totalPending = 0;
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
@@ -85,56 +91,113 @@ class _UserProfileState extends State<UserProfile> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Total Confirmed:",
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.grey),
-                            ),
-                            Text(
-                              "N23,000",
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
+                        StreamBuilder<QuerySnapshot>(
+                          stream: Firestore.instance
+                              .collection("Transactions")
+                              .document("Confirmed")
+                              .collection(user.id)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.waiting:
+                                return Container(
+                                  alignment: Alignment.center,
+                                  child: CircularProgressIndicator(),
+                                  height: 100,
+                                  width: 100,
+                                );
+                              default:
+                                if (snapshot.data.documents.isNotEmpty) {
+                                  totalConfirmed = 0;
+                                  snapshot.data.documents.map((document) {
+                                    Investment item = Investment.map(document);
+
+                                    totalConfirmed =
+                                        totalConfirmed + int.parse(item.amount);
+                                  }).toList();
+                                }
+                                return snapshot.data.documents.isEmpty
+                                    ? Container(
+                                        child: item("Total Confirmed", "0"),
+                                      )
+                                    : Container(
+                                        child: item(
+                                            "Total Confirmed",
+                                            commaFormat
+                                                .format(totalConfirmed)));
+                            }
+                          },
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Total Pending:",
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.grey),
-                            ),
-                            Text(
-                              "N23,000",
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
+                        StreamBuilder<QuerySnapshot>(
+                          stream: Firestore.instance
+                              .collection("Transactions")
+                              .document("Pending")
+                              .collection(user.id)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.waiting:
+                                return Container(
+                                  alignment: Alignment.center,
+                                  child: CircularProgressIndicator(),
+                                  height: 100,
+                                  width: 100,
+                                );
+                              default:
+                                if (snapshot.data.documents.isNotEmpty) {
+                                  totalPending = 0;
+                                  snapshot.data.documents.map((document) {
+                                    Investment item = Investment.map(document);
+
+                                    totalPending =
+                                        totalPending + int.parse(item.amount);
+                                  }).toList();
+                                }
+                                return snapshot.data.documents.isEmpty
+                                    ? Container(
+                                        child: item("Total Pending", "0"))
+                                    : Container(
+                                        child: item("Total Pending",
+                                            commaFormat.format(totalPending)));
+                            }
+                          },
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Total Cancelled:",
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.grey),
-                            ),
-                            Text(
-                              "N23,000",
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
+                        StreamBuilder<QuerySnapshot>(
+                          stream: Firestore.instance
+                              .collection("Transactions")
+                              .document("Cancelled")
+                              .collection(user.id)
+                              .orderBy("Timestamp", descending: true)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.waiting:
+                                return Container(
+                                  alignment: Alignment.center,
+                                  child: CircularProgressIndicator(),
+                                  height: 100,
+                                  width: 100,
+                                );
+                              default:
+                                if (snapshot.data.documents.isNotEmpty) {
+                                  totalCancelled = 0;
+                                  snapshot.data.documents.map((document) {
+                                    Investment item = Investment.map(document);
+
+                                    totalCancelled =
+                                        totalCancelled + int.parse(item.amount);
+                                  }).toList();
+                                }
+                                return snapshot.data.documents.isEmpty
+                                    ? Container(
+                                        child: item("Total Cancelled", "0"),
+                                      )
+                                    : Container(
+                                        child: item("Total Cancelled",
+                                            commaFormat.format(totalCancelled)),
+                                      );
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -198,12 +261,12 @@ class _UserProfileState extends State<UserProfile> {
                             width: double.infinity,
                             child: TabBarView(children: [
                               CustomOrderPage(
-                                  type: "Pending",
-                                  color: Styles.appPrimaryColor,
-                                  theUID: user.id),
-                              CustomOrderPage(
                                   type: "Confirmed",
                                   color: Colors.lightGreen,
+                                  theUID: user.id),
+                              CustomOrderPage(
+                                  type: "Pending",
+                                  color: Styles.appPrimaryColor,
                                   theUID: user.id),
                               CustomOrderPage(
                                   type: "Cancelled",
@@ -218,3 +281,18 @@ class _UserProfileState extends State<UserProfile> {
                 ))));
   }
 }
+
+Widget item(String type, String amount) => Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          type,
+          style: TextStyle(fontSize: 15, color: Colors.grey),
+        ),
+        Text(
+          "₦ $amount",
+          style: TextStyle(
+              fontSize: 22, color: Colors.black, fontWeight: FontWeight.w500),
+        ),
+      ],
+    );

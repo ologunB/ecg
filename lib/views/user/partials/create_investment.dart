@@ -31,12 +31,19 @@ class _PaymentMethodState extends State<CreateInvestment> {
     });
   }
 
-  String _retrieveDataError;
-
   Future<void> retrieveLostData() async {
     //var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    final LostDataResponse response = await ImagePicker.retrieveLostData();
 
+    if (response.isEmpty) {
+      return;
+    }
+    if (response.file != null) {
+      setState(() {
+        pop = response.file;
+      });
+    }
     if (image != null) {
       setState(() {
         pop = image;
@@ -51,9 +58,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
         setState(() {
           pop = response.file;
         });
-      } else {
-        _retrieveDataError = response.exception.code;
-      }
+      } else {}
     }
   }
 
@@ -88,7 +93,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                FutureBuilder<void>(
+                /*  FutureBuilder<void>(
                   future: retrieveLostData(),
                   builder:
                       (BuildContext context, AsyncSnapshot<void> snapshot) {
@@ -119,7 +124,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
                 RaisedButton(
                   onPressed: () {},
                   child: Text("choose image"),
-                ),
+                ),*/
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 18.0),
                   child: Container(
@@ -327,8 +332,8 @@ class _PaymentMethodState extends State<CreateInvestment> {
               title: "Confirm Order",
               onPress: () {
                 if (!checkedValue || pop == null) {
-                  showToast("Upload a Proof of Payment!", context);
-                  return;
+                  //  showToast("Upload a Proof of Payment!", context);
+                  //   return;
                 }
                 if (amount.text.isEmpty || selectedAccount == null) {
                   showToast("Fill all values!", context);
@@ -434,17 +439,18 @@ class _PaymentMethodState extends State<CreateInvestment> {
     mData.putIfAbsent("Timestamp", () => DateTime.now().millisecondsSinceEpoch);
     mData.putIfAbsent("id", () => rnd);
 
-    if (pop != null) {
+    //  if (pop != null) {
+    if (true) {
       _setState(() {
         isLoading = true;
       });
 
-      StorageReference storeRef = _storageRef.child("images/${randomString()}");
+    /*  StorageReference storeRef = _storageRef.child("images/${randomString()}");
       StorageUploadTask uploadTask = storeRef.putFile(pop);
       StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
       String url = (await downloadUrl.ref.getDownloadURL());
       mData.putIfAbsent("POP", () => url);
-
+*/
       Firestore.instance
           .collection("Admin")
           .document(presentDate())

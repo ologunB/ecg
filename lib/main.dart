@@ -2,6 +2,7 @@ import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/admin/admin_layout_template.dart';
 import 'package:ecgalpha/views/user/auth/auth_page.dart';
+import 'package:ecgalpha/views/user/partials/create_investment.dart';
 import 'package:ecgalpha/views/user/partials/layout_template.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

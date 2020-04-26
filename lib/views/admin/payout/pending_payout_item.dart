@@ -120,7 +120,10 @@ class _PendingPayoutItemState extends State<PendingPayoutItem> {
                                                 width: 100,
                                                 child:
                                                     CircularProgressIndicator())
-                                            : Container(),
+                                            : Container(
+                                                height: 10,
+                                                width: 100,
+                                              ),
                                       ),
                                       actions: <Widget>[
                                         InkWell(
@@ -227,7 +230,7 @@ class _PendingPayoutItemState extends State<PendingPayoutItem> {
           .collection("Transactions")
           .document("Confirmed")
           .collection(MY_UID)
-          .document(item.id)
+          .document(item.userUid)
           .delete();
 
       Firestore.instance

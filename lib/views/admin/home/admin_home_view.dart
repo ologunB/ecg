@@ -146,9 +146,13 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                             case ConnectionState.waiting:
                               return Container(
                                 alignment: Alignment.center,
-                                child: CircularProgressIndicator(),
-                                height: 100,
-                                width: 100,
+                                child: Container(
+                                  child: item(
+                                    " 0.00",
+                                    "Today's Pending",
+                                  ),
+                                ),
+
                               );
                             default:
                               if (snapshot.data.documents.isNotEmpty) {
@@ -190,9 +194,11 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                             case ConnectionState.waiting:
                               return Container(
                                 alignment: Alignment.center,
-                                child: CircularProgressIndicator(),
-                                height: 100,
-                                width: 100,
+                                child: item(
+                                  " 0.00",
+                                  "Today's Confirmed",
+                                ),
+
                               );
                             default:
                               if (snapshot.data.documents.isNotEmpty) {
@@ -234,9 +240,11 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                             case ConnectionState.waiting:
                               return Container(
                                 alignment: Alignment.center,
-                                child: CircularProgressIndicator(),
-                                height: 100,
-                                width: 100,
+                                child: item(
+                                  " 0.00",
+                                  "Today's Unpaid",
+                                ),
+
                               );
                             default:
                               if (snapshot.data.documents.isNotEmpty) {
@@ -279,9 +287,11 @@ class _AdminHomeViewState extends State<AdminHomeView> {
                             case ConnectionState.waiting:
                               return Container(
                                 alignment: Alignment.center,
-                                child: CircularProgressIndicator(),
-                                height: 100,
-                                width: 100,
+                                child: item(
+                                  " 0.00",
+                                  "Today's Paid",
+                                ),
+
                               );
                             default:
                               if (snapshot.data.documents.isNotEmpty) {

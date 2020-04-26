@@ -36,14 +36,16 @@ Widget middleItem(String type, String amount, String time, context) => Padding(
         ),
         child: FlatButton(
           onPressed: type == "Expecting"
-              ? () {
-                  Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                          builder: (context) => ExpectingPage(
-                                items: expectingList,
-                              )));
-                }
+              ? expectingList == []
+                  ? null
+                  : () {
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => ExpectingPage(
+                                    items: expectingList,
+                                  )));
+                    }
               : null,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -295,9 +297,8 @@ class _HomeViewState extends State<HomeView> {
                           case ConnectionState.waiting:
                             return Container(
                               alignment: Alignment.center,
-                              child: CircularProgressIndicator(),
-                              height: 100,
-                              width: 100,
+                              child:
+                                  middleItem("Expecting", "0", "--", context),
                             );
                           default:
                             int i = 0;
@@ -346,9 +347,8 @@ class _HomeViewState extends State<HomeView> {
                           case ConnectionState.waiting:
                             return Container(
                               alignment: Alignment.center,
-                              child: CircularProgressIndicator(),
-                              height: 100,
-                              width: 100,
+                              child: middleItem(
+                                  "Today's Pending", "0", "--", context),
                             );
                           default:
                             int i = 0;
@@ -397,9 +397,8 @@ class _HomeViewState extends State<HomeView> {
                           case ConnectionState.waiting:
                             return Container(
                               alignment: Alignment.center,
-                              child: CircularProgressIndicator(),
-                              height: 100,
-                              width: 100,
+                              child: middleItem(
+                                  "Today's Confirmed", "0", "--", context),
                             );
                           default:
                             int i = 0;
@@ -447,9 +446,8 @@ class _HomeViewState extends State<HomeView> {
                           case ConnectionState.waiting:
                             return Container(
                               alignment: Alignment.center,
-                              child: CircularProgressIndicator(),
-                              height: 100,
-                              width: 100,
+                              child: middleItem(
+                                  "Total Pending", "0", "--", context),
                             );
                           default:
                             int i = 0;
@@ -495,9 +493,8 @@ class _HomeViewState extends State<HomeView> {
                           case ConnectionState.waiting:
                             return Container(
                               alignment: Alignment.center,
-                              child: CircularProgressIndicator(),
-                              height: 100,
-                              width: 100,
+                              child: middleItem(
+                                  "Total Confirmed", "0", "--", context),
                             );
                           default:
                             int i = 0;
@@ -582,19 +579,7 @@ class _HomeViewState extends State<HomeView> {
                         }).toList();
                       }
                       return snapshot.data.documents.isEmpty
-                          ? Container(
-                              height: 100,
-                              width: 100,
-                              alignment: Alignment.center,
-                              child: Text(
-                                "No Recent",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 18),
-                              ),
-                            )
+                          ? Container()
                           : Container(
                               child: EachOrderItem(
                                 investment: item,
@@ -643,7 +628,19 @@ class _HomeViewState extends State<HomeView> {
                         }).toList();
                       }
                       return snapshot.data.documents.isEmpty
-                          ? Container()
+                          ? Container(
+                              height: 100,
+                              width: 100,
+                              alignment: Alignment.center,
+                              child: Text(
+                                "No Recent",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 18),
+                              ),
+                            )
                           : Container(
                               child: EachOrderItem(
                                 investment: item,
