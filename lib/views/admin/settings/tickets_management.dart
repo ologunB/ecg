@@ -274,7 +274,7 @@ class _ListViewNoteState extends State<TicketManagementPage>
                                                                 Firestore
                                                                     .instance
                                                                     .collection(
-                                                                        "Admin Help Collectin")
+                                                                        "Admin Help Collection")
                                                                     .document(
                                                                         item.id)
                                                                     .delete()

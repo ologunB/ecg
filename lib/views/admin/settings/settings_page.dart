@@ -224,7 +224,8 @@ class _ProfileViewState extends State<SettingsView> {
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Icon(Icons.history, color: Colors.yellow),
+                              child:
+                                  Icon(Icons.backup, color: Colors.deepOrange),
                             ),
                             Expanded(
                               child: Padding(
