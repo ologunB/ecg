@@ -179,7 +179,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                                       Text(
                                         "created " +
                                             timeAgo(DateTime
-                                                .fromMicrosecondsSinceEpoch(
+                                                .fromMillisecondsSinceEpoch(
                                                     user.timeStamp)),
                                         style: TextStyle(
                                             fontSize: 18,

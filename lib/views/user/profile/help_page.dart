@@ -4,7 +4,7 @@ import 'package:ecgalpha/models/help_support.dart';
 import 'package:ecgalpha/utils/constants.dart';
 import 'package:ecgalpha/utils/styles.dart';
 import 'package:ecgalpha/views/partials/custom_button.dart';
-import 'package:ecgalpha/views/user/profile/help_support.dart';
+import 'package:ecgalpha/views/user/profile/create_ticket.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -334,8 +334,21 @@ class _CustomHelpPageState extends State<CustomHelpPage> {
                                                     onTap: () {
                                                       ref
                                                           .document(item.id)
-                                                          .delete();
-                                                      Navigator.pop(context);
+                                                          .delete()
+                                                          .then((a) {
+                                                        Firestore.instance
+                                                            .collection(
+                                                                "Admin Help Collection")
+                                                            .document(item.id)
+                                                            .delete()
+                                                            .then((a) {
+                                                          Navigator.pop(
+                                                              context);
+                                                          showToast(
+                                                              "Ticket deleted",
+                                                              context);
+                                                        });
+                                                      });
                                                     },
                                                     child: Padding(
                                                       padding:

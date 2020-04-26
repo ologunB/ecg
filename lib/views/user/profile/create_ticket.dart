@@ -187,20 +187,25 @@ class _CreateTicketPageState extends State<CreateTicketPage> {
                         .then((a) {
                       setState(() {
                         isLoading = false;
-                      });
-                      Toast.show("Ticket Created!", context,
-                          duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
-                      Navigator.pop(context);
-                      showDialog(
-                          context: context,
-                          builder: (_) {
-                            return AlertDialog(
-                              content: Text(
-                                "Tickets will be attended to by support as soon as possible. Thanks for using ECG",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 18),
-                              ),
-                              actions: <Widget>[
+                        Firestore.instance
+                            .collection("Admin Help Collection")
+                            .document(rnd)
+                            .setData(m)
+                            .then((a) {
+                          Toast.show("Ticket Created!", context,
+                              duration: Toast.LENGTH_LONG,
+                              gravity: Toast.CENTER);
+                          Navigator.pop(context);
+                          showDialog(
+                              context: context,
+                              builder: (_) {
+                                return AlertDialog(
+                                  content: Text(
+                                    "Tickets will be attended to by support as soon as possible. Thanks for using ECG",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  actions: <Widget>[
 /*
                                 InkWell(
                                     onTap: () {
@@ -215,9 +220,11 @@ class _CreateTicketPageState extends State<CreateTicketPage> {
                                       ),
                                     ))
 */
-                              ],
-                            );
-                          });
+                                  ],
+                                );
+                              });
+                        });
+                      });
                     });
                   },
             icon: isLoading
