@@ -374,7 +374,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                   child: CachedNetworkImage(
                     imageUrl: widget.investment.pop.isEmpty
                         ? "ma"
-                        : widget.investment.pop.isEmpty,
+                        : widget.investment.pop,
                     fit: BoxFit.fitWidth,
                     placeholder: (context, url) => ClipRRect(
                       borderRadius: BorderRadius.circular(40.0),

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecgalpha/models/account.dart';
@@ -13,7 +12,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_selector/image_selector.dart';
 
 import '../../partials/custom_button.dart';
 
@@ -27,21 +25,21 @@ class _PaymentMethodState extends State<CreateInvestment> {
   Image image;
 
   Future _getImage() async {
-    /*  var image = await ImagePicker.pickImage(
+    var image = await ImagePicker.pickImage(
         source: ImageSource.gallery, imageQuality: 50);
 
     setState(() {
       pop = image;
-    });*/
+    });
 
-    Uint8List pngBytes = await ImageSelector.fromGallery(context);
+/*    Uint8List pngBytes = await ImageSelector.fromGallery(context);
     setState(() {
       image = Image.memory(
         pngBytes,
         width: 200,
         height: 200,
       );
-    });
+    });*/
   }
 
   Future<void> retrieveLostData() async {
@@ -280,7 +278,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
                             onTap: () {
                               _getImage();
                             },
-                            child: image == null
+                            child: pop == null
                                 ? Container(
                                     height: 100,
                                     color: Colors.blueAccent[100],
@@ -297,7 +295,7 @@ class _PaymentMethodState extends State<CreateInvestment> {
                                   )
                                 : Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: image),
+                                    child: Image.file(pop)),
                           ),
                         ),
                         Row(
